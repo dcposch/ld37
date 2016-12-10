@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf build",
-    "test": "standard src",
+    "test": "(cd src && standard)",
     "browserify": "browserify --debug -t brfs src/client > build/bundle.js",
     "build": "npm run clean && mkdirp build && npm run browserify && cp -r static/* build/",
     "start": "npm run build && node ./src/server"
