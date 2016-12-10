@@ -50,8 +50,8 @@ canvas.addEventListener('mousemove', function (e) {
 var verts = []
 var norms = []
 var uvs = []
-var W = config.WORLD.ROOM_WIDTH
-var H = config.WORLD.ROOM_HEIGHT
+var RW = config.WORLD.ROOM_WIDTH
+var RH = config.WORLD.ROOM_HEIGHT
 var face = [[0, 0], [0, 1], [1, 0], [1, 0], [0, 1], [1, 1]]
 for (var i = 0; i < 6; i++) {
   var nx = i >> 1 === 0 ? i % 2 * 2 - 1 : 0
@@ -59,9 +59,9 @@ for (var i = 0; i < 6; i++) {
   var nz = i >> 1 === 2 ? i % 2 * 2 - 1 : 0
   // ...each with two tris, six verts
   for (var j = 0; j < 6; j++) {
-    var x = (i >> 1 === 0 ? i % 2 : face[j][0]) * W - W / 2
-    var y = (i >> 1 === 1 ? i % 2 : face[j][i >> 2]) * W - W / 2
-    var z = (i >> 1 === 2 ? i % 2 : face[j][1]) * H
+    var x = (i >> 1 === 0 ? i % 2 : face[j][0]) * RW - RW / 2
+    var y = (i >> 1 === 1 ? i % 2 : face[j][i >> 2]) * RW - RW / 2
+    var z = (i >> 1 === 2 ? i % 2 : face[j][1]) * RH
     verts.push([x, y, z])
     norms.push([nx, ny, nz])
     uvs.push(face[j])
@@ -69,7 +69,7 @@ for (var i = 0; i < 6; i++) {
 }
 
 var drawRoom = regl({
-  frag: shaders.frag.texture,
+  frag: shaders.frag.texLight,
   vert: shaders.vert.uvWorld,
   attributes: {
     aVertexPosition: regl.buffer(verts),
@@ -78,7 +78,9 @@ var drawRoom = regl({
   },
   uniforms: {
     uMatrix: camera.updateMatrix,
-    uTexture: textures.room
+    uTexture: textures.room,
+    uLightPos: [0, 0, RH],
+    uLightColor: [1, 0.9, 0.8]
   },
   count: verts.length
 })
