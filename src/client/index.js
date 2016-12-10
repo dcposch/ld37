@@ -54,9 +54,9 @@ var RW = config.WORLD.ROOM_WIDTH
 var RH = config.WORLD.ROOM_HEIGHT
 var face = [[0, 0], [0, 1], [1, 0], [1, 0], [0, 1], [1, 1]]
 for (var i = 0; i < 6; i++) {
-  var nx = i >> 1 === 0 ? i % 2 * 2 - 1 : 0
-  var ny = i >> 1 === 1 ? i % 2 * 2 - 1 : 0
-  var nz = i >> 1 === 2 ? i % 2 * 2 - 1 : 0
+  var nx = i >> 1 === 0 ? 1 - i % 2 * 2 : 0
+  var ny = i >> 1 === 1 ? 1 - i % 2 * 2 : 0
+  var nz = i >> 1 === 2 ? 1 - i % 2 * 2 : 0
   // ...each with two tris, six verts
   for (var j = 0; j < 6; j++) {
     var x = (i >> 1 === 0 ? i % 2 : face[j][0]) * RW - RW / 2
@@ -79,7 +79,7 @@ var drawRoom = regl({
   uniforms: {
     uMatrix: camera.updateMatrix,
     uTexture: textures.room,
-    uLightPos: [0, 0, RH],
+    uLightPos: [0, 0, RH - 0.2],
     uLightColor: [1, 0.9, 0.8]
   },
   count: verts.length
