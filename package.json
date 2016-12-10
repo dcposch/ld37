@@ -1,0 +1,36 @@
+{
+  "name": "ld37",
+  "version": "0.0.0",
+  "description": "ludum dare 37",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf build",
+    "test": "standard src",
+    "browserify": "browserify --debug -t brfs src/client > build/bundle.js",
+    "build": "npm run clean && mkdirp build && npm run browserify && cp -r static/* build/",
+    "start": "npm run build && node ./src/server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dcposch/ld37.git"
+  },
+  "license": "UNLICENSED",
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/dcposch/ld37/issues"
+  },
+  "dependencies": {
+    "express": "^4.14.0",
+    "gl-mat4": "^1.1.4",
+    "gl-vec3": "^1.0.3",
+    "gl-vec4": "^1.0.1",
+    "regl": "^1.2.1"
+  },
+  "devDependencies": {
+    "brfs": "^1.4.3",
+    "browserify": "^13.1.0",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.5.4",
+    "standard": "^8.3.0"
+  }
+}
