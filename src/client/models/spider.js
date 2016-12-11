@@ -23,7 +23,7 @@ function Spider () {
   }
 }
 
-Spider.prototype.intersect = function (x, y, z0, z1) {
+Spider.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
   return false
 }
 
