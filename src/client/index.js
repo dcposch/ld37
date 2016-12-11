@@ -8,6 +8,7 @@ var {canvas, regl} = require('./env')
 var Couch = require('./models/couch')
 var Room = require('./models/room')
 var TV = require('./models/tv')
+var Spider = require('./models/spider')
 
 sound.preload()
 sound.play('start', {
@@ -83,8 +84,10 @@ document.querySelector('#fullscreen').addEventListener('click', function (e) {
 
 // Create the world
 state.models.push(new Room())
-state.models.push(new Couch())
+// state.models.push(new Couch())
 state.models.push(new TV())
+var spider = new Spider()
+state.models.push(spider)
 
 var scope = regl({
   uniforms: {
@@ -103,8 +106,13 @@ function frame (context) {
   regl.clear({ color: [1, 1, 1, 1], depth: 1 })
 
   // Update
-  if (state.lastFrameTime) playerControls.tick(state, context.time - state.lastFrameTime)
+  var t = context.time
+  if (state.lastFrameTime) playerControls.tick(state, t - state.lastFrameTime)
   state.lastFrameTime = context.time
+
+  // Spider render test
+  spider.location.x = Math.cos(t / 4) * 2
+  spider.location.y = Math.sin(t / 4) * 2
 
   sound.tick(state)
 
