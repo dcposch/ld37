@@ -30,6 +30,37 @@ Poly8.axisAligned = function (x0, y0, z0, x1, y1, z1) {
   ])
 }
 
+// Creates quads, two triangles each
+Poly8.createVertexData = function (polys) {
+  // Turn each polyhedron into six quads
+  var verts = []
+  var norms = []
+  var uvs = []
+  var face = [[0, 0], [0, 1], [1, 0], [1, 0], [0, 1], [1, 1]]
+  polys.forEach(function (poly) {
+    for (var i = 0; i < 6; i++) {
+      // TODO: accurate normals?
+      var nx = i >> 1 === 0 ? 1 - i % 2 * 2 : 0
+      var ny = i >> 1 === 1 ? 1 - i % 2 * 2 : 0
+      var nz = i >> 1 === 2 ? 1 - i % 2 * 2 : 0
+      // ...each with two tris, six verts
+      for (var j = 0; j < 6; j++) {
+        var ix = i >> 1 === 0 ? i % 2 : face[j][0]
+        var iy = i >> 1 === 1 ? i % 2 : face[j][i >> 2]
+        var iz = i >> 1 === 2 ? i % 2 : face[j][1]
+        var vert = poly.verts[ix * 4 + iy * 2 + iz]
+        verts.push(vert)
+        norms.push([nx, ny, nz])
+        // TODO: accurate UVs
+        uvs.push(face[j])
+      }
+    }
+  })
+  var count = verts.length
+
+  return {verts, norms, uvs, count}
+}
+
 // Finds the axis-aligned bounding box of a set of vertices
 function computeAABB (verts) {
   var aabb = {
