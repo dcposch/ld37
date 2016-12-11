@@ -96,7 +96,7 @@ function compileDraw (tv) {
     vert: shaders.vert.uvWorld,
     attributes: tv.screen.attributes,
     uniforms: {
-      uTexture: textures.netflix
+      uTexture: textures.smash
     },
     elements: tv.screen.elements,
     count: 6
@@ -105,7 +105,7 @@ function compileDraw (tv) {
   return function (context, props) {
     // Animate. Figure out which frame to show
     // TODO: refactor if we need to animate anything else
-    var numFrames = 26
+    var numFrames = 1
     var startTime = 1
     var duration = 3
     var t = Math.max(0, Math.min(0.9999, (context.time - startTime) / duration)) // range [0, 1)

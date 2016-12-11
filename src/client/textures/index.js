@@ -7,7 +7,8 @@ var {regl} = require('../env')
 module.exports = {
   'room': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./square-xxl.png'), 'base64')),
   'spider': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./spider.png'), 'base64')),
-  'netflix': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./netflix.png'), 'base64'))
+  'netflix': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./netflix.png'), 'base64')),
+  'smash': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./smash.png'), 'base64'))
 }
 
 function tex (dataURI) {
