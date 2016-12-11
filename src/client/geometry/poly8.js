@@ -49,7 +49,8 @@ Poly8.prototype.createMesh = function () {
 }
 
 // Creates an axis-aligned cuboid from p0 to p1
-Poly8.axisAligned = function (x0, y0, z0, x1, y1, z1) {
+// Optionally takes a list of 24 texture UVs, 4 for each of the 6 faces
+Poly8.axisAligned = function (x0, y0, z0, x1, y1, z1, uvs) {
   return new Poly8([
     [x0, y0, z0],
     [x0, y0, z1],
@@ -59,7 +60,7 @@ Poly8.axisAligned = function (x0, y0, z0, x1, y1, z1) {
     [x1, y0, z1],
     [x1, y1, z0],
     [x1, y1, z1]
-  ])
+  ], uvs)
 }
 
 // Finds the axis-aligned bounding box of a set of vertices
