@@ -1,11 +1,13 @@
 var camera = require('./camera')
 var config = require('../config')
-var Couch = require('./models/couch')
 var fullscreen = require('./fullscreen')
 var playerControls = require('./player-controls')
-var Room = require('./models/room')
 var sound = require('./sound')
 var {canvas, regl} = require('./env')
+
+var Couch = require('./models/couch')
+var Room = require('./models/room')
+var TV = require('./models/tv')
 
 sound.preload()
 sound.play('start', {
@@ -80,6 +82,8 @@ document.querySelector('#fullscreen').addEventListener('click', function (e) {
 // Create the world
 state.models.push(new Room())
 state.models.push(new Couch())
+state.models.push(new TV())
+
 var scope = regl({
   uniforms: {
     uMatrix: camera.updateMatrix,

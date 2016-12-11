@@ -2,6 +2,7 @@ var {regl} = require('../env')
 var shaders = require('../shaders')
 var textures = require('../textures')
 var Poly8 = require('../geometry/poly8')
+var Mesh = require('../geometry/mesh')
 
 // Couch width (x dimension), depth (y dimension), height (z dimension)
 var CW = 2
@@ -86,19 +87,21 @@ function makePolys () {
 }
 
 function compileDraw (polys) {
-  var data = Poly8.createVertexData(polys)
+  var mesh = Mesh.combine(polys.map(function (poly) {
+    return poly.createMesh()
+  }))
 
   return regl({
     frag: shaders.frag.texLight,
     vert: shaders.vert.uvWorld,
     attributes: {
-      aVertexPosition: regl.buffer(data.verts),
-      aVertexNormal: regl.buffer(data.norms),
-      aVertexUV: regl.buffer(data.uvs)
+      aVertexPosition: regl.buffer(mesh.verts),
+      aVertexNormal: regl.buffer(mesh.norms),
+      aVertexUV: regl.buffer(mesh.uvs)
     },
     uniforms: {
       uTexture: textures.room
     },
-    count: data.count
+    count: mesh.verts.length
   })
 }
