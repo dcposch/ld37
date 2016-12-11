@@ -1,6 +1,5 @@
 var validate = require('./validate')
 var vec3 = require('gl-vec3')
-var vec2 = require('gl-vec2')
 
 module.exports = Mesh
 
@@ -18,7 +17,7 @@ function Mesh (verts, norms, uvs) {
 Mesh.prototype.copy = function () {
   var verts = this.verts.map(function (v) { return vec3.clone(v) })
   var norms = this.norms.map(function (v) { return vec3.clone(v) })
-  var uvs = this.uvs ? this.uvs.map(function (v) { return vec2.clone(v) }) : null
+  var uvs = this.uvs ? this.uvs.map(function (v) { return new Float32Array(v) }) : null
   return new Mesh(verts, norms, uvs)
 }
 

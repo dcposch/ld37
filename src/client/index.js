@@ -111,8 +111,11 @@ function frame (context) {
   state.lastFrameTime = context.time
 
   // Spider render test
-  spider.location.x = Math.cos(t / 4) * 2
-  spider.location.y = Math.sin(t / 4) * 2
+  var theta = t / 2
+  spider.location.x = Math.cos(theta) * 2
+  spider.location.y = Math.sin(theta) * 2
+  spider.direction.azimuth = theta
+  spider.direction.altitude = Math.sin(t * 45) * 0.1 + 0.1
 
   sound.tick(state)
 

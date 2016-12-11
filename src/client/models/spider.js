@@ -34,9 +34,9 @@ Spider.prototype.draw = function () {
   // Update the mesh
   var scale = 0.01
   mat4.identity(mat)
-  mat4.rotateX(mat, mat, dir.azimuth)
-  mat4.rotateZ(mat, mat, dir.altitude)
-  mat4.translate(mat, mat, [-loc.x, -loc.y, -loc.z])
+  mat4.translate(mat, mat, [loc.x, loc.y, loc.z])
+  mat4.rotateZ(mat, mat, dir.azimuth)
+  mat4.rotateX(mat, mat, dir.altitude)
   mat4.scale(mat, mat, [scale, scale, scale])
   Mesh.transform(this.mesh, meshTemplate, mat)
 
@@ -75,15 +75,32 @@ function makeMesh () {
 
 function makePolys () {
   var polys = []
-  add(polys, 6, -4, 0, 8, 8, 8) // head
-  add(polys, 0, -3, 1, 6, 6, 6) // neck
-  add(polys, -12, -5, 0, 12, 10, 8) // body
+  add(polys, -4, 6, 0, 8, 8, 8, 32, 4) // head
+  add(polys, -3, 0, 1, 6, 6, 6, 0, 0) // neck
+  add(polys, -6, -10, 0, 12, 10, 8, 0, 18) // body
   return polys
 }
 
-// Add a cuboid by x, y, z, width, depth, and height
-function add (polys, x, y, z, w, d, h) {
-  polys.push(Poly8.axisAligned(x, y, z, x + w, y + d, z + h))
+// Add a cuboid by x, y, z, width, depth, and height, and integer UV
+// Follows the Minecraft texture format. See
+// http://papercraft.robhack.com/various_finds/Mine/texture_templates/mob/spider.png
+function add (polys, x, y, z, w, d, h, u, v) {
+  // w eg 12
+  // d eg 10
+  // h eg 8
+  var makeUV = function (iu, iv, iw, ih) {
+    return [iu / 64, iv / 32, (iu + iw) / 64, (iv + ih) / 32]
+  }
+  var uvs = [
+    makeUV(u + w + d, v + w + h, w, -h), // x0 face: left
+    makeUV(u, v + w + h, w, -h), // x1 face: right
+    makeUV(u + 2 * w + d, v + w + h, d, -h), // y0 face: back
+    makeUV(u + w, v + w + h, d, -h), // y1 face: front
+    makeUV(u + w + d, v, d, w), // z0 face: bottom
+    makeUV(u + w, v, d, w) // z1 face: top
+  ]
+
+  polys.push(Poly8.axisAligned(x, y, z, x + w, y + d, z + h, uvs))
 }
 
 // TODO: textured spider model? might not be necessary
