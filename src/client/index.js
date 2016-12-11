@@ -31,7 +31,8 @@ var state = {
   actions: {},
   mouse: {dx: 0, dy: 0},
   lastFrameTime: null,
-  models: []
+  models: [],
+  spiders: [new Spider()]
 }
 
 // Listen to user input
@@ -86,8 +87,6 @@ document.querySelector('#fullscreen').addEventListener('click', function (e) {
 state.models.push(new Room())
 state.models.push(new Couch())
 state.models.push(new TV())
-var spider = new Spider()
-state.models.push(spider)
 
 var scope = regl({
   uniforms: {
@@ -105,26 +104,29 @@ regl.frame(frame)
 function frame (context) {
   regl.clear({ color: [1, 1, 1, 1], depth: 1 })
 
-  // Update
-  var t = context.time
-  if (state.lastFrameTime) playerControls.tick(state, t - state.lastFrameTime)
-  state.lastFrameTime = context.time
+  // Update, except on the first frame where there is no dt
+  if (state.lastFrameTime) {
+    var dt = context.time - state.lastFrameTime
+    playerControls.tick(state, dt)
 
-  // Spider render test
-  var theta = t / 2
-  spider.location.x = Math.cos(theta) * 2
-  spider.location.y = Math.sin(theta) * 2
-  spider.direction.azimuth = theta
-  spider.direction.altitude = Math.sin(t * 45) * 0.1 + 0.1
+    // Swarm the spiders, and occasionally spawn a new one
+    state.spiders.forEach(function (spider) { spider.tick(dt) })
+    if (Math.random() < 0.001) state.spiders.push(new Spider())
 
-  sound.tick(state)
+    sound.tick(state)
+  }
 
   // Draw the scene
   scope(state, function (context) {
     state.models.forEach(function (model) {
       model.draw(context)
     })
+    state.spiders.forEach(function (spider) {
+      spider.draw(context)
+    })
   })
+
+  state.lastFrameTime = context.time
 }
 
 function resizeCanvas () {

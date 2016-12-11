@@ -3,6 +3,7 @@ var shaders = require('../shaders')
 var textures = require('../textures')
 var Poly8 = require('../geometry/poly8')
 var Mesh = require('../geometry/mesh')
+var config = require('../../config')
 var mat4 = require('gl-mat4')
 
 module.exports = Spider
@@ -12,7 +13,9 @@ var bufferUVs = regl.buffer(meshTemplate.uvs) // same for all spiders
 var mat = mat4.create() // matrix to translate, rotate, and scale each model
 
 function Spider () {
-  this.location = {x: 2, y: 2, z: 0}
+  this.location = {x: 0, y: 0, z: 0}
+  // Azimuth 0 points in the +Y direction.
+  // Altitude 0 points straight ahead. +PI/2 points up at the sky (+Z). -PI/2 points down.
   this.direction = {azimuth: 0, altitude: 0}
   this.mesh = meshTemplate.copy()
   // Allocate buffers once, update the contents each frame
@@ -27,15 +30,44 @@ Spider.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
   return false
 }
 
+// Spider logic
+Spider.prototype.tick = function (dt) {
+  var loc = this.location
+  var dir = this.direction
+
+  // Change direction randomly
+  var speed = 1
+  if (dir.altitude > 0) {
+    dir.altitude -= 0.005 // slowly lower head down
+    speed = dir.altitude > 0.5 ? 0 : 1.5
+  } else if (Math.random() < 0.002) {
+    dir.altitude += 1 // pop head up
+  } else {
+    dir.azimuth += (Math.random() - 0.5) * 0.2 // scamper around
+  }
+
+  // Move forward
+  loc.x += Math.cos(dir.azimuth) * speed * dt
+  loc.y += Math.sin(dir.azimuth) * speed * dt
+
+  // If we hit a wall, turn away
+  var rw = config.WORLD.ROOM_WIDTH - 0.03
+  var rand = (Math.random() - 0.5) * Math.PI
+  if (loc.x > rw / 2) dir.azimuth = Math.PI + rand // go in the -X direction ish
+  else if (loc.x < -rw / 2) dir.azimuth = rand // +X
+  else if (loc.y > rw / 2) dir.azimuth = Math.PI * 1.5 + rand // -Y
+  else if (loc.y < -rw / 2) dir.azimuth = Math.PI * 0.5 + rand // +Y
+}
+
 Spider.prototype.draw = function () {
   var loc = this.location
   var dir = this.direction
 
   // Update the mesh
-  var scale = 0.01
+  var scale = 0.005
   mat4.identity(mat)
   mat4.translate(mat, mat, [loc.x, loc.y, loc.z])
-  mat4.rotateZ(mat, mat, dir.azimuth)
+  mat4.rotateZ(mat, mat, dir.azimuth - Math.PI / 2)
   mat4.rotateX(mat, mat, dir.altitude)
   mat4.scale(mat, mat, [scale, scale, scale])
   Mesh.transform(this.mesh, meshTemplate, mat)
