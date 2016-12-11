@@ -60,7 +60,7 @@ function look (player, mouse) {
   mouse.dy = 0
 }
 
-// Apply gravity to the player, don't let them pass through blocks, etc
+// Apply gravity to the player, collide with objects
 function simulate (state, dt) {
   var player = state.player
   var loc = player.location
@@ -104,10 +104,10 @@ function simulate (state, dt) {
   loc.z += player.dzdt * dt
 }
 
-// Returns true if (x, y, z) is unpassable (either in a block or off the world)
+// Returns true if (x, y, z) is unpassable
 function collide (state, x, y, z) {
-  // TODO:
-  var rw = config.WORLD.ROOM_WIDTH
-  var rh = config.WORLD.ROOM_HEIGHT
-  return z < 0 || z > rh || x < -rw / 2 || x > rw / 2 || y < -rw / 2 || y > rw / 2
+  for (var i = 0; i < state.models.length; i++) {
+    if (state.models[i].intersect(x, y, z)) return true
+  }
+  return false
 }
