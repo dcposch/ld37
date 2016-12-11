@@ -5,7 +5,7 @@ var {regl} = require('../env')
 // That means compressed (png/gif/jpg) texture data is baked directly into bundle.js
 // No extra roundtrips, no async resource loading
 module.exports = {
-  'room': tex('data:image/gif;base64,' + fs.readFileSync(require.resolve('./checker.gif'), 'base64')),
+  'room': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./square-xxl.png'), 'base64')),
   'spider': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./spider.png'), 'base64'))
 }
 
