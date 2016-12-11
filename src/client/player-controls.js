@@ -36,7 +36,7 @@ function navigate (state, dt) {
 
   // Jumping only works if we're on the ground
   if (state.actions['jump'] && player.situation === 'on-ground') {
-    player.dzdt = config.SPEED_JUMP
+    player.dzdt = config.PHYSICS.SPEED_JUMP
     player.situation = 'airborne'
   }
 }

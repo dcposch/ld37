@@ -23,7 +23,8 @@ module.exports = {
   PHYSICS: {
     PLAYER_WIDTH: 0.5, // meters
     PLAYER_HEIGHT: 1.8,
-    SPEED_WALK: 1, // meters per second
+    SPEED_WALK: 1.5, // meters per second
+    SPEED_JUMP: 2,
     GRAVITY: 9.8 // ms^-2
   },
   WORLD: {
