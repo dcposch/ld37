@@ -106,7 +106,7 @@ function compileDraw (tv) {
     // Animate. Figure out which frame to show
     // TODO: refactor if we need to animate anything else
     var numFrames = 26
-    var startTime = 3
+    var startTime = 1
     var duration = 3
     var t = Math.max(0, Math.min(0.9999, (context.time - startTime) / duration)) // range [0, 1)
     var frame = Math.floor(t * numFrames)

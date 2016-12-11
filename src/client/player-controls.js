@@ -43,9 +43,15 @@ function move (state, v, r, azimuth, altitude) {
   var newY = v.y + Math.sin(azimuth) * Math.cos(altitude) * r
   var newZ = v.z + Math.sin(altitude) * r
 
-  if (!collide(state, newX, newY, newZ - PH, newZ)) {
+  if (!collide(state, newX, v.y, v.z - PH, v.z)) {
     v.x = newX
+  }
+
+  if (!collide(state, v.x, newY, v.z - PH, v.z)) {
     v.y = newY
+  }
+
+  if (!collide(state, v.x, v.y, newZ - PH, newZ)) {
     v.z = newZ
   }
 }

@@ -21,7 +21,7 @@ var state = {
     location: { x: 0, y: 2, z: config.PHYSICS.PLAYER_HEIGHT },
     // Azimuth ranges from 0 (looking down the +X axis) to 2*pi. Azimuth pi/2 looks at +Y.
     // Altitude ranges from -pi/2 (looking straight down) to pi/2 (up). 0 looks straight ahead.
-    direction: { azimuth: -Math.PI / 2, altitude: -Math.PI / 8 },
+    direction: { azimuth: Math.PI / 2, altitude: -Math.PI / 8 },
     // Physics
     dzdt: 0,
     // Situation can also be 'on-ground', 'suffocating'
