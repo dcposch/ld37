@@ -13,7 +13,7 @@ module.exports = {
       'A': 'left',
       'S': 'back',
       'D': 'right',
-      'Space': 'jump'
+      ' ': 'jump'
     },
     MOUSE: {
       0: 'attack'

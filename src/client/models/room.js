@@ -1,11 +1,15 @@
+var {regl} = require('../env')
 var config = require('../../config')
 var shaders = require('../shaders')
+var textures = require('../textures')
 
 var RW = config.WORLD.ROOM_WIDTH
 var RH = config.WORLD.ROOM_HEIGHT
 
-module.exports = function Room (regl) {
-  this.draw = compileDraw(regl)
+module.exports = Room
+
+function Room () {
+  this.draw = compileDraw()
 }
 
 Room.prototype.intersect = function (x, y, z) {
@@ -42,10 +46,7 @@ function compileDraw () {
       aVertexUV: regl.buffer(uvs)
     },
     uniforms: {
-      uMatrix: camera.updateMatrix,
-      uTexture: textures.room,
-      uLightPos: [0, 0, RH - 0.2],
-      uLightColor: [1, 0.9, 0.8]
+      uTexture: textures.room
     },
     count: verts.length
   })

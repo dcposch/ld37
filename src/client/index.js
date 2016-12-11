@@ -1,10 +1,9 @@
 var {canvas, regl} = require('./env')
-var shaders = require('./shaders')
-var textures = require('./textures')
 var config = require('../config')
 var camera = require('./camera')
 var playerControls = require('./player-controls')
 var Room = require('./models/room')
+var Couch = require('./models/couch')
 
 // All game state lives here
 var state = {
@@ -50,6 +49,14 @@ canvas.addEventListener('mousemove', function (e) {
 
 // Create the world
 state.models.push(new Room())
+state.models.push(new Couch())
+var scope = regl({
+  uniforms: {
+    uMatrix: camera.updateMatrix,
+    uLightPos: [0, 0, config.WORLD.ROOM_HEIGHT - 0.2],
+    uLightColor: [1, 0.9, 0.8]
+  }
+})
 
 // Start the render loop
 regl.frame(frame)
@@ -64,8 +71,10 @@ function frame (context) {
   state.lastFrameTime = context.time
 
   // Draw the scene
-  state.model.forEach(function (model) {
-    model.draw(context)
+  scope(state, function (context) {
+    state.models.forEach(function (model) {
+      model.draw(context)
+    })
   })
 }
 
