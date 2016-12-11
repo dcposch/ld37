@@ -43,6 +43,23 @@ document.addEventListener('keyup', function (e) {
   if (action) state.actions[action] = false
 })
 
+canvas.addEventListener('click', function (e) {
+  if (!document.pointerLockElement) canvas.requestPointerLock()
+  var action = config.CONTROLS.MOUSE[e.key]
+  if (action) state.actions[action] = false
+})
+
+canvas.addEventListener('mousemove', function (e) {
+  if (!document.pointerLockElement) return
+  state.mouse.dx += e.movementX
+  state.mouse.dy += e.movementY
+})
+
+document.addEventListener('visibilitychange', function () {
+  if (document.hidden) state.actions = {}
+})
+
+// Canvas size and fullscreen
 resizeCanvas()
 window.addEventListener('resize', resizeCanvas)
 
@@ -57,18 +74,6 @@ fullscreen.on('release', function () {
 document.querySelector('#fullscreen').addEventListener('click', function (e) {
   fullscreen.requestFullscreen(document.body)
   if (!document.pointerLockElement) canvas.requestPointerLock()
-})
-
-canvas.addEventListener('click', function (e) {
-  if (!document.pointerLockElement) canvas.requestPointerLock()
-  var action = config.CONTROLS.MOUSE[e.key]
-  if (action) state.actions[action] = false
-})
-
-canvas.addEventListener('mousemove', function (e) {
-  if (!document.pointerLockElement) return
-  state.mouse.dx += e.movementX
-  state.mouse.dy += e.movementY
 })
 
 // Create the world
