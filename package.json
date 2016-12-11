@@ -1,21 +1,12 @@
 {
   "name": "ld37",
-  "version": "0.0.0",
   "description": "ludum dare 37",
-  "main": "index.js",
-  "scripts": {
-    "clean": "rimraf build",
-    "test": "(cd src && standard)",
-    "browserify": "browserify --debug -t brfs src/client > build/bundle.js",
-    "build": "npm run clean && mkdirp build && npm run browserify && cp -r static/* build/",
-    "start": "npm run build && node ./src/server"
+  "version": "0.0.0",
+  "browserify": {
+    "transform": [
+      "brfs"
+    ]
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/dcposch/ld37.git"
-  },
-  "license": "UNLICENSED",
-  "author": "",
   "bugs": {
     "url": "https://github.com/dcposch/ld37/issues"
   },
@@ -30,7 +21,27 @@
     "brfs": "^1.4.3",
     "browserify": "^13.1.0",
     "mkdirp": "^0.5.1",
-    "rimraf": "^2.5.4",
-    "standard": "^8.3.0"
+    "nodemon": "^1.11.0",
+    "standard": "^8.3.0",
+    "watchify": "^3.7.0"
+  },
+  "license": "UNLICENSED",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dcposch/ld37.git"
+  },
+  "scripts": {
+    "build": "mkdirp build && browserify --debug src/client > build/bundle.js",
+    "start": "npm run build && node ./src/server",
+    "test": "standard",
+    "watch-js": "mkdirp build && watchify --debug src/client -o build/bundle.js",
+    "watch-server": "nodemon ./src/server -e js,pug,css -i static/",
+    "watch": "npm run watch-js & npm run watch-server"
+  },
+  "standard": {
+    "ignore": [
+      "build/"
+    ]
   }
 }

@@ -9,6 +9,7 @@ function main () {
 
   var app = express()
   app.use(express.static('build'))
+  app.use(express.static('static'))
   httpServer.on('request', app)
 
   httpServer.listen(config.SERVER.PORT, function () {
