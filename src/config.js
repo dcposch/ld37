@@ -21,10 +21,10 @@ module.exports = {
     MOUSE_SENSITIVITY: 0.005 // radians per pixel
   },
   PHYSICS: {
-    PLAYER_WIDTH: 0.5, // meters
+    PLAYER_WIDTH: 0.05, // meters
     PLAYER_HEIGHT: 1.8,
     SPEED_WALK: 2.5, // meters per second
-    SPEED_JUMP: 3,
+    SPEED_JUMP: 5,
     GRAVITY: 9.8 // ms^-2
   },
   WORLD: {
