@@ -81,7 +81,6 @@ function simulate (state, dt) {
   var underfoot = collide(state, loc.x, loc.y, newZ - PH)
   var head = collide(state, loc.x, loc.y, newZ + HEAD_COLLISION_BUFFER)
   if (head && underfoot) {
-    loc.z = newZ
     player.dzdt = 0
     player.situation = 'suffocating'
   } else if (head) {
