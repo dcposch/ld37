@@ -62,7 +62,6 @@ document.addEventListener('visibilitychange', function () {
   if (document.hidden) state.actions = {}
 })
 
-// Canvas size and fullscreen
 resizeCanvas()
 window.addEventListener('resize', resizeCanvas)
 
