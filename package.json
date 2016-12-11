@@ -15,7 +15,8 @@
     "gl-mat4": "^1.1.4",
     "gl-vec3": "^1.0.3",
     "gl-vec4": "^1.0.1",
-    "regl": "^1.2.1"
+    "regl": "^1.2.1",
+    "rimraf": "^2.5.4"
   },
   "devDependencies": {
     "brfs": "^1.4.3",
@@ -32,8 +33,9 @@
     "url": "git://github.com/dcposch/ld37.git"
   },
   "scripts": {
+    "clean": "rimraf build",
     "build": "mkdirp build && browserify --debug src/client > build/bundle.js",
-    "start": "npm run build && node ./src/server",
+    "start": "npm run clean && npm run build && node ./src/server",
     "test": "standard",
     "watch": "npm run watch-js & npm run watch-server",
     "watch-js": "mkdirp build && watchify --debug src/client -o build/bundle.js",
