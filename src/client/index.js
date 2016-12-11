@@ -11,7 +11,7 @@ var TV = require('./models/tv')
 
 sound.preload()
 sound.play('start', {
-  playing: function () { setTimeout(function () { sound.startLevel(1) }, 5000) }
+  playing: function () { setTimeout(function () { sound.startBackground(1) }, 5000) }
 })
 
 // All game state lives here
@@ -59,7 +59,10 @@ canvas.addEventListener('mousemove', function (e) {
 })
 
 document.addEventListener('visibilitychange', function () {
-  if (document.hidden) state.actions = {}
+  if (!document.hidden) return
+  for (var action in state.actions) {
+    state.actions[action] = false
+  }
 })
 
 resizeCanvas()
@@ -102,6 +105,8 @@ function frame (context) {
   // Update
   if (state.lastFrameTime) playerControls.tick(state, context.time - state.lastFrameTime)
   state.lastFrameTime = context.time
+
+  sound.tick(state)
 
   // Draw the scene
   scope(state, function (context) {

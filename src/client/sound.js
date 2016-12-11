@@ -11,14 +11,15 @@ var MUSIC = [
 
 var VOLUME = {
   'start': 0.7,
+  'footsteps': 0.4,
   'iron-horse': 0.6,
   'bangarang': 0.6
 }
 
 // Cache <audio> elements for instant playback
 var cache = {}
-
-var currentLevel = null
+var currentBackground = null
+var wasWalking = false
 
 // Preload short sound files
 function preload () {
@@ -30,6 +31,23 @@ function preload () {
   })
 }
 exports.preload = preload
+
+function tick (state) {
+  var isWalking = (
+    state.actions['forward'] || state.actions['back'] ||
+    state.actions['left'] || state.actions['right']
+  )
+
+  if (isWalking && !wasWalking) {
+    startPlay('footsteps')
+  }
+  if (wasWalking && !isWalking) {
+    stopPlay('footsteps')
+  }
+
+  wasWalking = isWalking
+}
+exports.tick = tick
 
 // Takes a name (for short sounds) or a URL (for larger files, not in git)
 // Optionally takes a time offset in seconds
@@ -53,28 +71,44 @@ function play (name, opts) {
 exports.play = play
 
 // Start playing music for given level (should be: 1, 2, 3)
-function startLevel (num) {
+function startBackground (num) {
   var name = MUSIC[num - 1]
   var volume = VOLUME[name] || 1
 
   var audio = play(name)
   audio.loop = true
 
-  if (currentLevel) {
-    crossfade(currentLevel, audio, volume)
+  if (currentBackground) {
+    crossfade(currentBackground, audio, volume)
   } else {
     fadeIn(audio, volume)
   }
-  currentLevel = audio
+  currentBackground = audio
 }
-exports.startLevel = startLevel
+exports.startBackground = startBackground
+
+function startPlay (name) {
+  var audio = play(name)
+  audio.loop = true
+}
+exports.startPlay = startPlay
+
+function stopPlay (name) {
+  var audio = cache[name]
+  if (!audio) return
+  audio.pause()
+}
+exports.stopPlay = stopPlay
 
 /**
  * Slowly increase the volume of an audio tag.
  */
-function fadeIn (audio, volume) {
+function fadeIn (audio, volume, ms) {
   volume = volume || 1
+  ms = ms || 2500
+  var increment = audio.volume / (ms / 50)
   var interval
+
   audio.volume = 0
 
   addEvents(audio, {
@@ -83,7 +117,7 @@ function fadeIn (audio, volume) {
   })
 
   function onInterval () {
-    audio.volume = Math.min(audio.volume + 0.02, volume)
+    audio.volume = Math.min(audio.volume + increment, volume)
     if (audio.volume === volume) clearInterval(interval)
   }
 }
@@ -91,11 +125,16 @@ function fadeIn (audio, volume) {
 /**
  * Slowly decrease the volume of an audio tag.
  */
-function fadeOut (audio) {
+function fadeOut (audio, ms) {
+  ms = ms || 2500
+  var increment = audio.volume / (ms / 50)
   var interval = setInterval(onInterval, 50)
   function onInterval () {
-    audio.volume = Math.max(audio.volume - 0.02, 0)
-    if (audio.volume === 0) clearInterval(interval)
+    audio.volume = Math.max(audio.volume - increment, 0)
+    if (audio.volume === 0) {
+      audio.pause()
+      clearInterval(interval)
+    }
   }
 }
 
@@ -128,5 +167,4 @@ function addEvents (audio, opts) {
 }
 
 // for easier debugging
-window.startLevel = startLevel
-window.play = play
+window.sound = exports
