@@ -10,10 +10,10 @@ function Poly8 (verts, uvs) {
   this.aabb = computeAABB(verts)
 }
 
-// Tests for intersection
-Poly8.prototype.intersect = function (x, y, z) {
+// Tests for intersection with a line segment
+Poly8.prototype.intersect = function (x, y, z0, z1) {
   var b = this.aabb // axis aligned bounding box
-  return x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1 && z > b.z0 && z < b.z1
+  return x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1 && Math.max(z0, b.z0) < Math.min(z1, b.z1)
 }
 
 // Creates an axis-aligned cuboid from p0 to p1

@@ -8,12 +8,13 @@ var EPS = 0.001
 var PW = config.PHYSICS.PLAYER_WIDTH
 var PH = config.PHYSICS.PLAYER_HEIGHT
 var HORIZONTAL_COLLISION_DIRS = [
-  [PW, 0, 0], [PW, 0, -1],
-  [-PW, 0, 0], [-PW, 0, -1],
-  [0, PW, 0], [0, PW, -1],
-  [0, -PW, 0], [0, -PW, -1]
+  [PW, 0],
+  [-PW, 0],
+  [0, PW],
+  [0, -PW]
 ]
-var BUMP_SPEED = 1
+
+var COLLIDE_PRECISION_ITERATIONS = 15
 
 // Calculates player physics. Lets the player move and look around.
 function tick (state, dt) {
@@ -68,12 +69,18 @@ function simulate (state, dt) {
 
   // Horizontal collision
   HORIZONTAL_COLLISION_DIRS.forEach(function (dir) {
-    if (!collide(state, loc.x + dir[0], loc.y + dir[1], loc.z + dir[2])) return
-    // Back off just enough to avoid collision. Don't bounce.
-    if (dir[0] > 0) loc.x -= BUMP_SPEED * dt
-    if (dir[0] < 0) loc.x += BUMP_SPEED * dt
-    if (dir[1] > 0) loc.y -= BUMP_SPEED * dt
-    if (dir[1] < 0) loc.y += BUMP_SPEED * dt
+    if (collide(state, loc.x + dir[0], loc.y + dir[1], loc.z - PH, loc.z)) {
+      var multiplier = 1.0;
+
+      for (var iter = 0; iter < COLLIDE_PRECISION_ITERATIONS; iter++) {
+        if (collide(state, (loc.x - dir[0] * multiplier) + dir[0], (loc.y - dir[1] * multiplier) + dir[1], loc.z - PH, loc.z)) {
+          loc.x -= dir[0] * multiplier;
+          loc.y -= dir[1] * multiplier;
+        }
+
+        multiplier *= 0.5;
+      }
+    }
   })
 
   // Gravity
@@ -104,10 +111,10 @@ function simulate (state, dt) {
   loc.z += player.dzdt * dt
 }
 
-// Returns true if (x, y, z) is unpassable
-function collide (state, x, y, z) {
+// Returns true if the line segment (x, y, z0, z1) collides with any of the models
+function collide (state, x, y, z0, z1) {
   for (var i = 0; i < state.models.length; i++) {
-    if (state.models[i].intersect(x, y, z)) return true
+    if (state.models[i].intersect(x, y, z0, z1)) return true
   }
   return false
 }
