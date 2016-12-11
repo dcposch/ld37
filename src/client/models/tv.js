@@ -13,11 +13,11 @@ var D = 0.1
 var H = 1.0
 
 // Bezel
-var B = 0.05 // bezel is 5 cm from wall
-var S = 0.04 // screen is inset, 4cm from wall
+var B = 0.05 // bezel is 5 cm around outside of screen
+var S = 0.09 // screen is inset, 9cm from wall
 
 // Mounted 1m above the ground on the +Y wall
-var MH = 1.0
+var MH = 0
 
 module.exports = TV
 
@@ -76,7 +76,7 @@ function compileDraw (polys) {
       aVertexUV: regl.buffer(meshScreen.uvs)
     },
     uniforms: {
-      uTexture: textures.room // TODO: animate
+      uTexture: textures.tvScreen // TODO: animate
     },
     count: meshScreen.verts.length
   })

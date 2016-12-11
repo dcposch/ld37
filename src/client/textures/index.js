@@ -6,7 +6,8 @@ var {regl} = require('../env')
 // No extra roundtrips, no async resource loading
 module.exports = {
   'room': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./square-xxl.png'), 'base64')),
-  'spider': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./spider.png'), 'base64'))
+  'spider': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./spider.png'), 'base64')),
+  'tvScreen': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./smash.png'), 'base64'))
 }
 
 function tex (dataURI) {
