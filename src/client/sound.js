@@ -2,6 +2,9 @@ var SFX = [
   'bite',
   'footsteps',
   'spider-walk',
+  'spawn1',
+  'spawn2',
+  'spawn3',
   'start'
 ]
 
