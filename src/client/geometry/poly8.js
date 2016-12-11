@@ -14,9 +14,11 @@ function Poly8 (verts, uvs) {
 }
 
 // Tests for intersection with a line segment
-Poly8.prototype.intersect = function (x, y, z0, z1) {
+Poly8.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
   var b = this.aabb // axis aligned bounding box
-  return x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1 && Math.max(z0, b.z0) <= Math.min(z1, b.z1)
+  return Math.max(x0, b.x0) <= Math.min(x1, b.x1) &&
+         Math.max(y0, b.y0) <= Math.min(y1, b.y1) &&
+         Math.max(z0, b.z0) <= Math.min(z1, b.z1)
 }
 
 var face = [[0, 0], [0, 1], [1, 0], [1, 0], [0, 1], [1, 1]]

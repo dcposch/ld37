@@ -6,15 +6,9 @@ module.exports = {
 
 var PW = config.PHYSICS.PLAYER_WIDTH
 var PH = config.PHYSICS.PLAYER_HEIGHT
-var HORIZONTAL_COLLISION_DIRS = [
-  [PW, 0],
-  [-PW, 0],
-  [0, PW],
-  [0, -PW]
-]
 
 var EPS = 0.001
-var HEAD_COLLISION_BUFFER = 0.1
+var HEAD_COLLISION_BUFFER = 0.15
 
 // Calculates player physics. Lets the player move and look around.
 function tick (state, dt) {
@@ -49,7 +43,7 @@ function move (state, v, r, azimuth, altitude) {
   var newY = v.y + Math.sin(azimuth) * Math.cos(altitude) * r
   var newZ = v.z + Math.sin(altitude) * r
 
-  if (!playerCollide(state, newX, newY, newZ - PH, newZ)) {
+  if (!collide(state, newX, newY, newZ - PH, newZ)) {
     v.x = newX
     v.y = newY
     v.z = newZ
@@ -78,8 +72,8 @@ function simulate (state, dt) {
   var newZ = loc.z + player.dzdt * dt
 
   // Vertical collision
-  var underfoot = playerCollide(state, loc.x, loc.y, newZ - PH)
-  var head = playerCollide(state, loc.x, loc.y, newZ + HEAD_COLLISION_BUFFER)
+  var underfoot = collide(state, loc.x, loc.y, newZ - PH)
+  var head = collide(state, loc.x, loc.y, newZ + HEAD_COLLISION_BUFFER)
   if (head && underfoot) {
     loc.z = newZ
     player.dzdt = 0
@@ -96,20 +90,14 @@ function simulate (state, dt) {
   }
 }
 
-function playerCollide (state, x, y, z0, z1) {
-  return HORIZONTAL_COLLISION_DIRS.some(function (dir) {
-    return collide(state, x + dir[0], y + dir[1], z0, z1)
-  })
-}
-
-// Returns true if the line segment (x, y, z0, z1) collides with any of the models
+// Returns true if the player at (x, y, z0, z1) collides with any of the models
 function collide (state, x, y, z0, z1) {
   if (z1 === undefined) {
     z1 = z0 + EPS
   }
 
   for (var i = 0; i < state.models.length; i++) {
-    if (state.models[i].intersect(x, y, z0, z1)) return true
+    if (state.models[i].intersect(x - PW, x + PW, y - PW, y + PW, z0, z1)) return true
   }
 
   return false

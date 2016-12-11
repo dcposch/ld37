@@ -12,8 +12,13 @@ function Room () {
   this.draw = compileDraw()
 }
 
-Room.prototype.intersect = function (x, y, z0, z1) {
-  return z0 < 0 || z0 > RH || z1 < 0 || z1 > RH || x < -RW / 2 || x > RW / 2 || y < -RW / 2 || y > RW / 2
+Room.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
+  return z0 < 0 || z0 > RH ||
+         z1 < 0 || z1 > RH ||
+    x0 < -RW / 2 || x0 > RW / 2 ||
+    x1 < -RW / 2 || x1 > RW / 2 ||
+    y0 < -RW / 2 || y0 > RW / 2 ||
+    y1 < -RW / 2 || y1 > RW / 2
 }
 
 function compileDraw () {

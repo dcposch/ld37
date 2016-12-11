@@ -16,9 +16,9 @@ function Couch () {
   this.draw = compileDraw(this.polys)
 }
 
-Couch.prototype.intersect = function (x, y, z0, z1) {
+Couch.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
   for (var i = 0; i < this.polys.length; i++) {
-    if (this.polys[i].intersect(x, y, z0, z1)) return true
+    if (this.polys[i].intersect(x0, x1, y0, y1, z0, z1)) return true
   }
   return false
 }
