@@ -35,9 +35,9 @@
     "build": "mkdirp build && browserify --debug src/client > build/bundle.js",
     "start": "npm run build && node ./src/server",
     "test": "standard",
+    "watch": "npm run watch-js & npm run watch-server",
     "watch-js": "mkdirp build && watchify --debug src/client -o build/bundle.js",
-    "watch-server": "nodemon ./src/server -e js,pug,css -i static/",
-    "watch": "npm run watch-js & npm run watch-server"
+    "watch-server": "nodemon ./src/server -e js,pug,css -i static/"
   },
   "standard": {
     "ignore": [

@@ -1,10 +1,11 @@
-var {canvas, regl} = require('./env')
-var config = require('../config')
 var camera = require('./camera')
+var config = require('../config')
+var Couch = require('./models/couch')
+var fullscreen = require('./fullscreen')
 var playerControls = require('./player-controls')
 var Room = require('./models/room')
-var Couch = require('./models/couch')
 var sound = require('./sound')
+var {canvas, regl} = require('./env')
 
 sound.preload()
 sound.play('start', {
@@ -42,7 +43,8 @@ document.addEventListener('keyup', function (e) {
 })
 
 canvas.addEventListener('click', function (e) {
-  if (!document.pointerLockElement) return canvas.requestPointerLock()
+  if (!fullscreen.fullscreenElement) fullscreen.requestFullscreen(canvas)
+  if (!document.pointerLockElement) canvas.requestPointerLock()
   var action = config.CONTROLS.MOUSE[e.key]
   if (action) state.actions[action] = false
 })
