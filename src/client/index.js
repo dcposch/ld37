@@ -33,6 +33,7 @@ var state = {
 
 // Listen to user input
 document.addEventListener('keydown', function (e) {
+  if (!document.pointerLockElement) canvas.requestPointerLock()
   var action = config.CONTROLS.KEY[e.key]
   if (action) state.actions[action] = true
 })
