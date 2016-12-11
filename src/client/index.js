@@ -42,8 +42,11 @@ document.addEventListener('keyup', function (e) {
   if (action) state.actions[action] = false
 })
 
+resizeCanvas()
+window.addEventListener('resize', resizeCanvas)
+
 canvas.addEventListener('click', function (e) {
-  if (!fullscreen.fullscreenElement) fullscreen.requestFullscreen(canvas)
+  if (!fullscreen.fullscreenElement) fullscreen.requestFullscreen(document.body)
   if (!document.pointerLockElement) canvas.requestPointerLock()
   var action = config.CONTROLS.MOUSE[e.key]
   if (action) state.actions[action] = false
@@ -84,6 +87,11 @@ function frame (context) {
       model.draw(context)
     })
   })
+}
+
+function resizeCanvas () {
+  canvas.width = document.body.clientWidth
+  canvas.height = document.body.clientHeight
 }
 
 // For easier debugging
