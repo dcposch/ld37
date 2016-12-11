@@ -84,7 +84,7 @@ document.querySelector('#fullscreen').addEventListener('click', function (e) {
 
 // Create the world
 state.models.push(new Room())
-// state.models.push(new Couch())
+state.models.push(new Couch())
 state.models.push(new TV())
 var spider = new Spider()
 state.models.push(spider)

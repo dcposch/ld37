@@ -29,12 +29,13 @@ Spider.prototype.intersect = function (x, y, z0, z1) {
 
 Spider.prototype.draw = function () {
   var loc = this.location
-  // TODO: rotate
-  // var dir = this.direction
+  var dir = this.direction
 
   // Update the mesh
   var scale = 0.01
   mat4.identity(mat)
+  mat4.rotateX(mat, mat, dir.azimuth)
+  mat4.rotateZ(mat, mat, dir.altitude)
   mat4.translate(mat, mat, [-loc.x, -loc.y, -loc.z])
   mat4.scale(mat, mat, [scale, scale, scale])
   Mesh.transform(this.mesh, meshTemplate, mat)
