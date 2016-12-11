@@ -6,7 +6,7 @@ module.exports = Poly8
 // Represents an 8-point polyhedron
 function Poly8 (verts, uvs) {
   validate(verts, 3, 8)
-  if (uvs) validate(uvs, 2, 8)
+  if (uvs) validate(uvs, 4, 6)
 
   this.verts = verts
   this.uvs = uvs
@@ -21,7 +21,8 @@ Poly8.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
          Math.max(z0, b.z0) <= Math.min(z1, b.z1)
 }
 
-var face = [[0, 0], [0, 1], [1, 0], [1, 0], [0, 1], [1, 1]]
+// Each face consists of two triangles
+var FACE = [[0, 0], [0, 1], [1, 0], [1, 0], [0, 1], [1, 1]]
 
 // Creates a mesh with six quads, two triangles each, like the six faces of a cube
 Poly8.prototype.createMesh = function () {
@@ -30,20 +31,26 @@ Poly8.prototype.createMesh = function () {
 
   // Create six faces...
   for (var i = 0; i < 6; i++) {
-    // TODO: accurate normals?
+    // TODO: accurate normals? probably unnecessary unless we add specular lights
     var nx = i >> 1 === 0 ? 1 - i % 2 * 2 : 0
     var ny = i >> 1 === 1 ? 1 - i % 2 * 2 : 0
     var nz = i >> 1 === 2 ? 1 - i % 2 * 2 : 0
+    var faceUVs = this.uvs ? this.uvs[i] : null
 
     // ...each with two tris, six verts
     for (var j = 0; j < 6; j++) {
-      var ix = i >> 1 === 0 ? i % 2 : face[j][0]
-      var iy = i >> 1 === 1 ? i % 2 : face[j][i >> 2]
-      var iz = i >> 1 === 2 ? i % 2 : face[j][1]
+      var vi = FACE[j] // `vi` is one of [0, 0], [0, 1], [1, 0], or [1, 1]
+
+      var ix = i >> 1 === 0 ? i % 2 : vi[0]
+      var iy = i >> 1 === 1 ? i % 2 : vi[i >> 2]
+      var iz = i >> 1 === 2 ? i % 2 : vi[1]
       var vert = this.verts[ix * 4 + iy * 2 + iz]
       verts.push(vert)
+
       norms.push([nx, ny, nz])
-      uvs.push(face[j]) // TODO: handle custom uvs (this.uvs !== null)
+
+      var uv = faceUVs ? [faceUVs[vi[0] * 2], faceUVs[vi[1] * 2 + 1]] : vi
+      uvs.push(uv)
     }
   }
 
@@ -51,7 +58,7 @@ Poly8.prototype.createMesh = function () {
 }
 
 // Creates an axis-aligned cuboid from p0 to p1
-// Optionally takes a list of 24 texture UVs, 4 for each of the 6 faces
+// Optionally takes a list of 6 texture UVs arrays for the six faces (x0, x1, y0, y1, z0, z1)
 Poly8.axisAligned = function (x0, y0, z0, x1, y1, z1, uvs) {
   return new Poly8([
     [x0, y0, z0],
