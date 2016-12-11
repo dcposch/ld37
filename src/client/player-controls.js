@@ -13,6 +13,7 @@ var HORIZONTAL_COLLISION_DIRS = [
   [0, PW, 0], [0, PW, -1],
   [0, -PW, 0], [0, -PW, -1]
 ]
+var BUMP_SPEED = 1
 
 // Calculates player physics. Lets the player move and look around.
 function tick (state, dt) {
@@ -69,10 +70,10 @@ function simulate (state, dt) {
   HORIZONTAL_COLLISION_DIRS.forEach(function (dir) {
     if (!collide(state, loc.x + dir[0], loc.y + dir[1], loc.z + dir[2])) return
     // Back off just enough to avoid collision. Don't bounce.
-    if (dir[0] > 0) loc.x = Math.ceil(loc.x) - PW - EPS
-    if (dir[0] < 0) loc.x = Math.floor(loc.x) + PW + EPS
-    if (dir[1] > 0) loc.y = Math.ceil(loc.y) - PW - EPS
-    if (dir[1] < 0) loc.y = Math.floor(loc.y) + PW + EPS
+    if (dir[0] > 0) loc.x -= BUMP_SPEED * dt
+    if (dir[0] < 0) loc.x += BUMP_SPEED * dt
+    if (dir[1] > 0) loc.y -= BUMP_SPEED * dt
+    if (dir[1] < 0) loc.y += BUMP_SPEED * dt
   })
 
   // Gravity
@@ -88,15 +89,14 @@ function simulate (state, dt) {
   } else if (head) {
     player.dzdt = 0
     player.situation = 'airborne'
-    loc.z = Math.floor(loc.z - PH - EPS) + PH
+    loc.z -= BUMP_SPEED * dt
   } else if (legs) {
     player.dzdt = 0
     player.situation = 'on-ground'
-    loc.z = Math.ceil(loc.z - PW - EPS) + PH
+    loc.z += BUMP_SPEED * dt
   } else if (underfoot && player.dzdt <= 0) {
     player.dzdt = 0
     player.situation = 'on-ground'
-    loc.z = Math.ceil(loc.z - PH - EPS) + PH
   } else {
     player.situation = 'airborne'
   }

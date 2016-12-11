@@ -1,6 +1,7 @@
 var {regl} = require('../env')
 var shaders = require('../shaders')
 var textures = require('../textures')
+var Poly8 = require('../geometry/poly8')
 
 var CW = 2
 var CD = 1
@@ -14,7 +15,9 @@ function Couch () {
 }
 
 Couch.prototype.intersect = function (x, y, z) {
-  // TODO: loop thru polys, compute intersection
+  for (var i = 0; i < this.polys.length; i++) {
+    if (this.polys[i].intersect(x, y, z)) return true
+  }
   return false
 }
 
@@ -32,12 +35,12 @@ function makePolys () {
     x = i % 2 * PEG_CW - PEG_CW / 2
     y = (i >> 1) * PEG_CD - PEG_CD / 2
     off = PEGW / 2
-    polys.push(makeAxisPoly(x - off, y - off, 0, x + off, y + off, PEGH))
+    polys.push(Poly8.axisAligned(x - off, y - off, 0, x + off, y + off, PEGH))
   }
 
   // Base
   var BASEH = 0.35
-  polys.push(makeAxisPoly(-CW / 2, -CD / 2, PEGH, CW / 2, CD / 2, BASEH))
+  polys.push(Poly8.axisAligned(-CW / 2, -CD / 2, PEGH, CW / 2, CD / 2, BASEH))
 
   // Cushions
   var SEATH = 0.5
@@ -45,8 +48,8 @@ function makePolys () {
   var SEATW = CW - 2 * GAP
   for (i = 0; i < 2; i++) {
     // Seat cushion
-    polys.push(makeAxisPoly(-SEATW / 2, -CD / 2, BASEH + GAP, -GAP / 2, CD / 2, SEATH))
-    polys.push(makeAxisPoly(GAP / 2, -CD / 2, BASEH + GAP, SEATW / 2, CD / 2, SEATH))
+    polys.push(Poly8.axisAligned(-SEATW / 2, -CD / 2, BASEH + GAP, -GAP / 2, CD / 2, SEATH))
+    polys.push(Poly8.axisAligned(GAP / 2, -CD / 2, BASEH + GAP, SEATW / 2, CD / 2, SEATH))
   }
 
   // Backrest
@@ -56,7 +59,7 @@ function makePolys () {
   var YBT = -CD * 0.6 // back, at the top
   var ZB = BASEH // z coordinate of the bottom
   var ZT = CH // top of backrest = height of couch
-  polys.push([
+  polys.push(new Poly8([
     [-CW / 2, YBB, ZB],
     [-CW / 2, YBT, ZT],
     [-CW / 2, YFB, ZB],
@@ -65,7 +68,7 @@ function makePolys () {
     [CW / 2, YBT, ZT],
     [CW / 2, YFB, ZB],
     [CW / 2, YFT, ZT]
-  ])
+  ]))
 
   // Armrests
   for (i = 0; i < 2; i++) {
@@ -75,7 +78,7 @@ function makePolys () {
     var y1 = CD * 0.5
     var z0 = SEATH
     var z1 = SEATH + CW * 0.1
-    polys.push(makeAxisPoly(x0, y0, z0, x1, y1, z1))
+    polys.push(Poly8.axisAligned(x0, y0, z0, x1, y1, z1))
   }
 
   return polys
@@ -98,7 +101,7 @@ function compileDraw (polys) {
         var ix = i >> 1 === 0 ? i % 2 : face[j][0]
         var iy = i >> 1 === 1 ? i % 2 : face[j][i >> 2]
         var iz = i >> 1 === 2 ? i % 2 : face[j][1]
-        var vert = poly[ix * 4 + iy * 2 + iz]
+        var vert = poly.verts[ix * 4 + iy * 2 + iz]
         verts.push(vert)
         norms.push([nx, ny, nz])
         // TODO: accurate UVs
@@ -120,17 +123,4 @@ function compileDraw (polys) {
     },
     count: verts.length
   })
-}
-
-function makeAxisPoly (x0, y0, z0, x1, y1, z1) {
-  return [
-    [x0, y0, z0],
-    [x0, y0, z1],
-    [x0, y1, z0],
-    [x0, y1, z1],
-    [x1, y0, z0],
-    [x1, y0, z1],
-    [x1, y1, z0],
-    [x1, y1, z1]
-  ]
 }
