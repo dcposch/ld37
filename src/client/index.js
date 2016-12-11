@@ -45,8 +45,20 @@ document.addEventListener('keyup', function (e) {
 resizeCanvas()
 window.addEventListener('resize', resizeCanvas)
 
+fullscreen.on('attain', function () {
+  document.body.classList.add('fullscreen')
+})
+
+fullscreen.on('release', function () {
+  document.body.classList.remove('fullscreen')
+})
+
+document.querySelector('#fullscreen').addEventListener('click', function (e) {
+  fullscreen.requestFullscreen(document.body)
+  if (!document.pointerLockElement) canvas.requestPointerLock()
+})
+
 canvas.addEventListener('click', function (e) {
-  if (!fullscreen.fullscreenElement) fullscreen.requestFullscreen(document.body)
   if (!document.pointerLockElement) canvas.requestPointerLock()
   var action = config.CONTROLS.MOUSE[e.key]
   if (action) state.actions[action] = false

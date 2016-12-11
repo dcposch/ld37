@@ -1,3 +1,7 @@
+var EventEmitter = require('events')
+
+var fullscreen = new EventEmitter()
+
 function requestFullscreen (el) {
   var request = (
     el.requestFullscreen ||
@@ -7,9 +11,9 @@ function requestFullscreen (el) {
   )
   request.call(el)
 }
-exports.requestFullscreen = requestFullscreen
+fullscreen.requestFullscreen = requestFullscreen
 
-Object.defineProperty(exports, 'fullscreenElement', {
+Object.defineProperty(fullscreen, 'fullscreenElement', {
   get: function () {
     return (
       document.fullscreenElement ||
@@ -20,3 +24,14 @@ Object.defineProperty(exports, 'fullscreenElement', {
     )
   }
 })
+
+document.addEventListener('fullscreenchange', onFullscreenChange)
+document.addEventListener('webkitfullscreenchange', onFullscreenChange)
+document.addEventListener('mozfullscreenchange', onFullscreenChange)
+document.addEventListener('onmsfullscreenchange', onFullscreenChange)
+
+function onFullscreenChange () {
+  fullscreen.emit(fullscreen.fullscreenElement ? 'attain' : 'release')
+}
+
+module.exports = exports = fullscreen
