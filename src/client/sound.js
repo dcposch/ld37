@@ -1,17 +1,20 @@
 var SFX = [
-  'spider-chattering',
+  'bite',
+  'footsteps',
+  'spider-walk',
   'start'
 ]
 
-var MUSIC = [
+var BACKGROUND_MUSIC = [
   'the-escalation', // level 1
   'iron-horse',     // level 2
   'bangarang'       // level 3
 ]
 
+// Custom volumes for certain sounds, all others will be 1
 var VOLUME = {
   'start': 0.7,
-  'footsteps': 0.4,
+  'footsteps': 0.2,
   'iron-horse': 0.6,
   'bangarang': 0.6
 }
@@ -72,7 +75,7 @@ exports.play = play
 
 // Start playing music for given level (should be: 1, 2, 3)
 function startBackground (num) {
-  var name = MUSIC[num - 1]
+  var name = BACKGROUND_MUSIC[num - 1]
   var volume = VOLUME[name] || 1
 
   var audio = play(name)
