@@ -4,6 +4,12 @@ var camera = require('./camera')
 var playerControls = require('./player-controls')
 var Room = require('./models/room')
 var Couch = require('./models/couch')
+var sound = require('./sound')
+
+sound.preload()
+sound.play('start', {
+  playing: function () { setTimeout(function () { sound.startLevel(1) }, 5000) }
+})
 
 // All game state lives here
 var state = {
