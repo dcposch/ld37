@@ -5,7 +5,8 @@ var SFX = [
   'spawn1',
   'spawn2',
   'spawn3',
-  'start'
+  'start',
+  'flamethrower'
 ]
 
 var BACKGROUND_MUSIC = [
@@ -20,7 +21,8 @@ var VOLUME = {
   'footsteps': 0.2,
   'iron-horse': 0.6,
   'bangarang': 0.6,
-  'spider-walk': 0.3
+  'spider-walk': 0.3,
+  'flamethrower': 0.2
 }
 
 // Cache <audio> elements for instant playback
@@ -58,6 +60,14 @@ function tick (state) {
   }
   if (state.spiders.length === 0 && isPlaying['spider-walk']) {
     stopPlay('spider-walk')
+  }
+
+  // Flamethrower sound
+  if (state.actions.attack && !isPlaying['flamethrower']) {
+    startPlay('flamethrower')
+  }
+  if (!state.actions.attack && isPlaying['flamethrower']) {
+    stopPlay('flamethrower')
   }
 }
 exports.tick = tick
