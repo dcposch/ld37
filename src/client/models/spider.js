@@ -98,9 +98,9 @@ Spider.draw = regl({
   frag: shaders.frag.texLight,
   vert: shaders.vert.uvWorld,
   attributes: {
-    aVertexPosition: function (context, props) { return props.spider.buffers.verts },
-    aVertexNormal: function (context, props) { return props.spider.buffers.norms },
-    aVertexUV: bufferUVs
+    aPosition: function (context, props) { return props.spider.buffers.verts },
+    aNormal: function (context, props) { return props.spider.buffers.norms },
+    aUV: bufferUVs
   },
   uniforms: {
     uTexture: textures.spider

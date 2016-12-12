@@ -103,9 +103,9 @@ function compileDraw (polys) {
     frag: shaders.frag.texLight,
     vert: shaders.vert.uvWorld,
     attributes: {
-      aVertexPosition: regl.buffer(mesh.verts),
-      aVertexNormal: regl.buffer(mesh.norms),
-      aVertexUV: regl.buffer(mesh.uvs)
+      aPosition: regl.buffer(mesh.verts),
+      aNormal: regl.buffer(mesh.norms),
+      aUV: regl.buffer(mesh.uvs)
     },
     uniforms: {
       uTexture: textures.couch

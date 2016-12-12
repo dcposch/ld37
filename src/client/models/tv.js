@@ -76,9 +76,9 @@ function makeScreen () {
 
   return {
     attributes: {
-      aVertexPosition: regl.buffer(verts),
-      aVertexNormal: regl.buffer(normals),
-      aVertexUV: regl.buffer(uvs)
+      aPosition: regl.buffer(verts),
+      aNormal: regl.buffer(normals),
+      aUV: regl.buffer(uvs)
     },
     elements: regl.elements(elems)
   }
@@ -93,9 +93,9 @@ function compileDraw (tv) {
     frag: shaders.frag.texLight,
     vert: shaders.vert.uvWorld,
     attributes: {
-      aVertexPosition: regl.buffer(meshBezel.verts),
-      aVertexNormal: regl.buffer(meshBezel.norms),
-      aVertexUV: regl.buffer(meshBezel.uvs)
+      aPosition: regl.buffer(meshBezel.verts),
+      aNormal: regl.buffer(meshBezel.norms),
+      aUV: regl.buffer(meshBezel.uvs)
     },
     uniforms: {
       uTexture: textures.wood
@@ -138,7 +138,7 @@ function compileDraw (tv) {
       [u1, v0],
       [u1, v1]
     ]
-    tv.screen.attributes.aVertexUV.subdata(uvs)
+    tv.screen.attributes.aUV.subdata(uvs)
 
     drawBezel(context)
     drawScreen(context)
