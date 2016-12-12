@@ -26,7 +26,8 @@ var state = {
     // Physics
     dzdt: 0,
     // Situation can also be 'on-ground', 'suffocating'
-    situation: 'airborne'
+    situation: 'airborne',
+    score: 0
   },
   actions: {},
   mouse: {dx: 0, dy: 0},

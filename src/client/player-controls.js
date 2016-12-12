@@ -25,7 +25,6 @@ function gameplay (state, dt) {
   if (state.actions['attack']) {
     var player = state.player
     var loc = player.location
-    var dir = player.direction
 
     // Try just getting a big box around me
     var x0 = loc.x - SPIDER_ATTACK_RANGE
@@ -46,8 +45,10 @@ function gameplay (state, dt) {
     // Remove the spiders in reverse
     for (var i = spidersToRemove.length - 1; i >= 0; i--) {
       state.spiders.splice(spidersToRemove[i], 1)
+      state.player.score++
     }
 
+    console.log(state.player.score)
     state.actions['attack'] = false
   }
 }
