@@ -20,7 +20,7 @@ var VOLUME = {
   'footsteps': 0.2,
   'iron-horse': 0.6,
   'bangarang': 0.6,
-  'spider-walk': 0.5
+  'spider-walk': 0.3
 }
 
 // Cache <audio> elements for instant playback
