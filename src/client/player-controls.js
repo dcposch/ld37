@@ -13,6 +13,7 @@ var SPIDER_ATTACK_RANGE = 1.5
 
 // Calculates player physics. Lets the player move and look around.
 function tick (state, dt) {
+  dt = Math.min(dt, 0.1)
   gameplay(state, dt)
   navigate(state, dt)
   simulate(state, dt)
