@@ -120,8 +120,8 @@ function makeMesh () {
 function makePolys () {
   var polys = []
   addAxisAligned(polys, -4, 6, 4, 8, 8, 8, 32, 4) // head
-  addAxisAligned(polys, -3, 0, 5, 6, 6, 6, 0, 0) // neck
-  addAxisAligned(polys, -6, -10, 4, 12, 10, 8, 0, 18) // body
+  addAxisAligned(polys, -3, 0, 5, 6, 6, 6, 0, 0) // thorax (neck)
+  addAxisAligned(polys, -6, -10, 4, 12, 10, 8, 0, 18) // abdomen (body)
   return polys
 }
 
@@ -132,18 +132,7 @@ function addAxisAligned (polys, x, y, z, w, d, h, u, v) {
   // w eg 12
   // d eg 10
   // h eg 8
-  var makeUV = function (iu, iv, iw, ih) {
-    return [iu / 64, iv / 32, (iu + iw) / 64, (iv + ih) / 32]
-  }
-  var uvs = [
-    makeUV(u + w + d, v + w + h, w, -h), // x0 face: left
-    makeUV(u, v + w + h, w, -h), // x1 face: right
-    makeUV(u + 2 * w + d, v + w + h, d, -h), // y0 face: back
-    makeUV(u + w, v + w + h, d, -h), // y1 face: front
-    makeUV(u + w + d, v, d, w), // z0 face: bottom
-    makeUV(u + w, v, d, w) // z1 face: top
-  ]
-
+  var uvs = getUVs(x, y, z, w, d, h, u, v)
   polys.push(Poly8.axisAligned(x, y, z, x + w, y + d, z + h, uvs))
 }
 
@@ -171,7 +160,29 @@ function makeLeg (rotateY, rotateZ, translate) {
 }
 
 function makeLegMesh () {
-  return Poly8.axisAligned(0, 0, 8, 14, 2, 10).createMesh()
+  var x = 0
+  var y = 0
+  var z = 8
+  var w = 14
+  var d = 2
+  var h = 2
+  var uvs = getUVs(x, y, z, w, d, h, 27, 0)
+  return Poly8.axisAligned(x, y, z, w, d, h, uvs).createMesh()
+}
+
+function getUVs (x, y, z, w, d, h, u, v) {
+  function makeUV (iu, iv, iw, ih) {
+    console.log([iu / 64, iv / 32, (iu + iw) / 64, (iv + ih) / 32])
+    return [iu / 64, iv / 32, (iu + iw) / 64, (iv + ih) / 32]
+  }
+  return [
+    makeUV(u + w + d, v + w + h, w, -h), // x0 face: left
+    makeUV(u, v + w + h, w, -h), // x1 face: right
+    makeUV(u + 2 * w + d, v + w + h, d, -h), // y0 face: back
+    makeUV(u + w, v + w + h, d, -h), // y1 face: front
+    makeUV(u + w + d, v, d, w), // z0 face: bottom
+    makeUV(u + w, v, d, w) // z1 face: top
+  ]
 }
 
 // TODO: textured spider model? might not be necessary
