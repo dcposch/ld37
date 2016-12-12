@@ -9,12 +9,46 @@ var PH = config.PHYSICS.PLAYER_HEIGHT
 
 var EPS = 0.001
 var HEAD_COLLISION_BUFFER = 0.15
+var SPIDER_ATTACK_RANGE = 1.5
 
 // Calculates player physics. Lets the player move and look around.
 function tick (state, dt) {
+  gameplay(state, dt)
   navigate(state, dt)
   simulate(state, dt)
   look(state.player, state.mouse)
+}
+
+// Check for user attacks
+function gameplay (state, dt) {
+  if (state.actions['attack']) {
+    var player = state.player
+    var loc = player.location
+    var dir = player.direction
+
+    // Try just getting a big box around me
+    var x0 = loc.x - SPIDER_ATTACK_RANGE
+    var x1 = loc.x + SPIDER_ATTACK_RANGE
+    var y0 = loc.y - SPIDER_ATTACK_RANGE
+    var y1 = loc.y + SPIDER_ATTACK_RANGE
+    var z0 = loc.z - PH
+    var z1 = loc.z
+
+    var spidersToRemove = []
+
+    for (var i = 0; i < state.spiders.length; i++) {
+      if (state.spiders[i].intersect(x0, x1, y0, y1, z0, z1)) {
+        spidersToRemove.push(i)
+      }
+    }
+
+    // Remove the spiders in reverse
+    for (var i = spidersToRemove.length - 1; i >= 0; i--) {
+      state.spiders.splice(spidersToRemove[i], 1)
+    }
+
+    state.actions['attack'] = false
+  }
 }
 
 // Let the player move

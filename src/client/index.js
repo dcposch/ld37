@@ -50,8 +50,8 @@ document.addEventListener('keyup', function (e) {
 
 canvas.addEventListener('click', function (e) {
   if (!document.pointerLockElement) canvas.requestPointerLock()
-  var action = config.CONTROLS.MOUSE[e.key]
-  if (action) state.actions[action] = false
+  var action = config.CONTROLS.MOUSE[0]
+  if (action) state.actions[action] = true
 })
 
 canvas.addEventListener('mousemove', function (e) {

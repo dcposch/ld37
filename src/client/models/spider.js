@@ -12,6 +12,8 @@ var meshTemplate = makeMesh()
 var bufferUVs = regl.buffer(meshTemplate.uvs) // same for all spiders
 var mat = mat4.create() // matrix to translate, rotate, and scale each model
 
+var SCALE_RADIUS = 10
+
 function Spider (scale) {
   this.scale = scale || 0.01
   this.location = {x: 0, y: 0, z: 0}
@@ -31,7 +33,10 @@ function Spider (scale) {
 }
 
 Spider.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
-  return false
+  var loc = this.location
+  var radius = SCALE_RADIUS * this.scale
+  var poly = Poly8.axisAligned(loc.x - radius, loc.y - radius, loc.z - radius, loc.x + radius, loc.y + radius, loc.z + radius)
+  return poly.intersect(x0, x1, y0, y1, z0, z1)
 }
 
 // Spider logic
