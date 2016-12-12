@@ -8,9 +8,10 @@ var mat4 = require('gl-mat4')
 
 module.exports = Spider
 
+var mat = mat4.create() // matrix to translate, rotate, and scale each model
+var legTemplate = makeLegMesh()
 var meshTemplate = makeMesh()
 var bufferUVs = regl.buffer(meshTemplate.uvs) // same for all spiders
-var mat = mat4.create() // matrix to translate, rotate, and scale each model
 
 var SCALE_RADIUS = 10
 
@@ -108,23 +109,26 @@ Spider.draw = regl({
 
 function makeMesh () {
   var polys = makePolys()
-  return Mesh.combine(polys.map(function (poly) {
+  var meshes = polys.map(function (poly) {
     return poly.createMesh()
-  }))
+  })
+  meshes = meshes.concat(makeLegs())
+
+  return Mesh.combine(meshes)
 }
 
 function makePolys () {
   var polys = []
-  add(polys, -4, 6, 0, 8, 8, 8, 32, 4) // head
-  add(polys, -3, 0, 1, 6, 6, 6, 0, 0) // neck
-  add(polys, -6, -10, 0, 12, 10, 8, 0, 18) // body
+  addAxisAligned(polys, -4, 6, 4, 8, 8, 8, 32, 4) // head
+  addAxisAligned(polys, -3, 0, 5, 6, 6, 6, 0, 0) // neck
+  addAxisAligned(polys, -6, -10, 4, 12, 10, 8, 0, 18) // body
   return polys
 }
 
 // Add a cuboid by x, y, z, width, depth, and height, and integer UV
 // Follows the Minecraft texture format. See
 // http://papercraft.robhack.com/various_finds/Mine/texture_templates/mob/spider.png
-function add (polys, x, y, z, w, d, h, u, v) {
+function addAxisAligned (polys, x, y, z, w, d, h, u, v) {
   // w eg 12
   // d eg 10
   // h eg 8
@@ -141,6 +145,33 @@ function add (polys, x, y, z, w, d, h, u, v) {
   ]
 
   polys.push(Poly8.axisAligned(x, y, z, x + w, y + d, z + h, uvs))
+}
+
+function makeLegs () {
+  return [
+    makeLeg(-0.3, -0.6, [-14, 2.5, 0.003]),
+    makeLeg(-0.3, -0.3, [-14, 2, 0.002]),
+    makeLeg(-0.3, 0.3, [-12, 1.5, 0.001]),
+    makeLeg(-0.3, 0.6, [-12, 1, 0]),
+    makeLeg(0.3, 0.6, [0, 2.5, 0.003]),
+    makeLeg(0.3, 0.3, [0, 2, 0.002]),
+    makeLeg(0.3, -0.3, [-2, 1.5, 0.001]),
+    makeLeg(0.3, -0.6, [-2, 1, 0])
+  ]
+}
+
+function makeLeg (rotateY, rotateZ, translate) {
+  var leg = legTemplate.copy()
+  mat4.identity(mat)
+  mat4.rotateY(mat, mat, rotateY)
+  mat4.rotateZ(mat, mat, rotateZ)
+  mat4.translate(mat, mat, translate)
+  Mesh.transform(leg, legTemplate, mat)
+  return leg
+}
+
+function makeLegMesh () {
+  return Poly8.axisAligned(0, 0, 8, 14, 2, 10).createMesh()
 }
 
 // TODO: textured spider model? might not be necessary

@@ -33,7 +33,7 @@ var state = {
   mouse: {dx: 0, dy: 0},
   lastFrameTime: null,
   models: [],
-  spiders: [new Spider()]
+  spiders: []
 }
 
 // Listen to user input
