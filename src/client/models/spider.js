@@ -8,18 +8,18 @@ var mat4 = require('gl-mat4')
 
 module.exports = Spider
 
+var mat = mat4.create() // matrix to translate, rotate, and scale each model
 var meshTemplate = makeMesh()
 var bufferUVs = regl.buffer(meshTemplate.uvs) // same for all spiders
-var mat = mat4.create() // matrix to translate, rotate, and scale each model
 
 function Spider (scale) {
-  this.scale = scale || 0.01
-  this.location = {x: 0, y: 0, z: 0}
+  this.scale = scale || 0.05
+  this.location = {x: 2, y: 0, z: 1}
   // Azimuth 0 points in the +Y direction.
   // Altitude 0 points straight ahead. +PI/2 points up at the sky (+Z). -PI/2 points down.
   this.direction = {
-    azimuth: Math.random() * 2 * Math.PI,
-    altitude: Math.random() < 0.2 ? 0.5 : 0
+    azimuth: 0, //Math.random() * 2 * Math.PI,
+    altitude: 0 //Math.random() < 0.2 ? 0.5 : 0
   }
   this.mesh = meshTemplate.copy()
   // Allocate buffers once, update the contents each frame
@@ -36,6 +36,7 @@ Spider.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
 
 // Spider logic
 Spider.prototype.tick = function (dt) {
+  return
   var loc = this.location
   var dir = this.direction
 
@@ -103,23 +104,26 @@ Spider.draw = regl({
 
 function makeMesh () {
   var polys = makePolys()
-  return Mesh.combine(polys.map(function (poly) {
+  var meshes = polys.map(function (poly) {
     return poly.createMesh()
-  }))
+  })
+  meshes = meshes.concat(makeLegMeshes())
+
+  return Mesh.combine(meshes)
 }
 
 function makePolys () {
   var polys = []
-  add(polys, -4, 6, 0, 8, 8, 8, 32, 4) // head
-  add(polys, -3, 0, 1, 6, 6, 6, 0, 0) // neck
-  add(polys, -6, -10, 0, 12, 10, 8, 0, 18) // body
+  addAxisAligned(polys, -4, 6, 2, 8, 8, 8, 32, 4) // head
+  addAxisAligned(polys, -3, 0, 3, 6, 6, 6, 0, 0) // neck
+  addAxisAligned(polys, -6, -10, 2, 12, 10, 8, 0, 18) // body
   return polys
 }
 
 // Add a cuboid by x, y, z, width, depth, and height, and integer UV
 // Follows the Minecraft texture format. See
 // http://papercraft.robhack.com/various_finds/Mine/texture_templates/mob/spider.png
-function add (polys, x, y, z, w, d, h, u, v) {
+function addAxisAligned (polys, x, y, z, w, d, h, u, v) {
   // w eg 12
   // d eg 10
   // h eg 8
@@ -136,6 +140,19 @@ function add (polys, x, y, z, w, d, h, u, v) {
   ]
 
   polys.push(Poly8.axisAligned(x, y, z, x + w, y + d, z + h, uvs))
+}
+
+function makeLegMeshes () {
+  return makeLegMesh()
+}
+
+function makeLegMesh () {
+  mat4.identity(mat)
+  mat4.rotateY(mat, mat, 0.1)
+
+  var mesh = Poly8.axisAligned(-20, 1, 5, 0, 3, 7).createMesh()
+  Mesh.transform(mesh, mesh, mat)
+  return mesh
 }
 
 // TODO: textured spider model? might not be necessary
