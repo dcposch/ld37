@@ -112,7 +112,9 @@ function frame (context) {
 
     // Swarm the spiders, and occasionally spawn a new one
     state.spiders.forEach(function (spider) { spider.tick(dt) })
-    if (Math.random() < 0.01) state.spiders.push(new Spider())
+    if (Math.random() < 0.01) {
+      state.spiders.push(new Spider((Math.random() * 0.005) + 0.01))
+    }
 
     sound.tick(state)
   }

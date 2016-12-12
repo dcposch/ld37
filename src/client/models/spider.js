@@ -12,7 +12,8 @@ var meshTemplate = makeMesh()
 var bufferUVs = regl.buffer(meshTemplate.uvs) // same for all spiders
 var mat = mat4.create() // matrix to translate, rotate, and scale each model
 
-function Spider () {
+function Spider (scale) {
+  this.scale = scale || 0.01
   this.location = {x: 0, y: 0, z: 0}
   // Azimuth 0 points in the +Y direction.
   // Altitude 0 points straight ahead. +PI/2 points up at the sky (+Z). -PI/2 points down.
@@ -67,12 +68,11 @@ Spider.prototype.draw = function () {
   var dir = this.direction
 
   // Update the mesh
-  var scale = 0.01
   mat4.identity(mat)
   mat4.translate(mat, mat, [loc.x, loc.y, loc.z])
   mat4.rotateZ(mat, mat, dir.azimuth - Math.PI / 2)
   mat4.rotateX(mat, mat, dir.altitude)
-  mat4.scale(mat, mat, [scale, scale, scale])
+  mat4.scale(mat, mat, [this.scale, this.scale, this.scale])
   Mesh.transform(this.mesh, meshTemplate, mat)
 
   // Update buffers
