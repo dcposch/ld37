@@ -28,7 +28,7 @@ function TV () {
   this.draw = compileDraw(this)
 }
 
-TV.prototype.intersect = function (x, y, z) {
+TV.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
   return false
 }
 

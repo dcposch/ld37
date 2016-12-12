@@ -51,7 +51,7 @@ Spider.prototype.tick = function (dt) {
   loc.y += Math.sin(dir.azimuth) * speed * dt
 
   // If we hit a wall, turn away
-  var rw = config.WORLD.ROOM_WIDTH - 0.03
+  var rw = config.WORLD.ROOM_WIDTH - 0.3
   var rand = (Math.random() - 0.5) * Math.PI
   if (loc.x > rw / 2) dir.azimuth = Math.PI + rand // go in the -X direction ish
   else if (loc.x < -rw / 2) dir.azimuth = rand // +X
@@ -64,7 +64,7 @@ Spider.prototype.draw = function () {
   var dir = this.direction
 
   // Update the mesh
-  var scale = 0.005
+  var scale = 0.01
   mat4.identity(mat)
   mat4.translate(mat, mat, [loc.x, loc.y, loc.z])
   mat4.rotateZ(mat, mat, dir.azimuth - Math.PI / 2)
