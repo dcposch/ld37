@@ -10,7 +10,9 @@ module.exports = {
   'netflix': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./netflix-pink.png'), 'base64')),
   'smash': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./smash.png'), 'base64')),
   'couch': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./couch.png'), 'base64')),
-  'wood': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./wood-dark.png'), 'base64'))
+  'wood': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./wood-dark.png'), 'base64')),
+  'metal': tex('data:image/png;base64,' + fs.readFileSync(require.resolve('./metal.png'), 'base64')),
+  'fire': tex('data:image/gif;base64,' + fs.readFileSync(require.resolve('./fire.gif'), 'base64'))
 }
 
 function tex (dataURI) {

@@ -23,6 +23,8 @@ function tick (state, dt) {
 // Check for user attacks
 function gameplay (state, dt) {
   if (state.actions['attack']) {
+    state.flamethrower.shoot()
+
     var player = state.player
     var loc = player.location
 
@@ -34,22 +36,15 @@ function gameplay (state, dt) {
     var z0 = loc.z - PH
     var z1 = loc.z
 
-    var spidersToRemove = []
-
-    for (var i = 0; i < state.spiders.length; i++) {
-      if (state.spiders[i].intersect(x0, x1, y0, y1, z0, z1)) {
-        spidersToRemove.push(i)
-      }
+    // Remove spiders that we've hit, and increase the score
+    var spiders = state.spiders
+    var offset = 0
+    for (var i = 0; i < spiders.length; i++) {
+      spiders[i - offset] = spiders[i]
+      if (spiders[i].intersect(x0, x1, y0, y1, z0, z1)) offset++
     }
-
-    // Remove the spiders in reverse
-    for (i = spidersToRemove.length - 1; i >= 0; i--) {
-      state.spiders.splice(spidersToRemove[i], 1)
-      state.player.score++
-    }
-
-    console.log(state.player.score)
-    state.actions['attack'] = false
+    spiders.length -= offset
+    state.player.score += offset
   }
 }
 

@@ -49,11 +49,12 @@ Spider.prototype.tick = function (dt) {
   var speed = 1
   if (dir.altitude > 0) {
     dir.altitude -= 0.005 // slowly lower head down
-    speed = dir.altitude > 0.5 ? 0 : 1.5
+    speed = dir.altitude > 0.4 ? 0 : 1.5
   } else if (Math.random() < 0.002) {
-    dir.altitude += 1 // pop head up
+    dir.altitude += 0.5 // pop head up
   } else {
-    dir.azimuth += (Math.random() - 0.5) * 0.2 // scamper around
+    var d = (Math.random() - 0.5) * 0.5 // scamper around
+    dir.azimuth += d * d
   }
 
   // Move forward

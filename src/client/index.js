@@ -4,11 +4,13 @@ var fullscreen = require('./fullscreen')
 var playerControls = require('./player-controls')
 var sound = require('./sound')
 var {canvas, regl} = require('./env')
+var coordinates = require('./geometry/coordinates')
 
 var Couch = require('./models/couch')
 var Room = require('./models/room')
 var TV = require('./models/tv')
 var Spider = require('./models/spider')
+var Flamethrower = require('./models/flamethrower')
 
 sound.preload()
 sound.play('start', {
@@ -33,7 +35,8 @@ var state = {
   mouse: {dx: 0, dy: 0},
   lastFrameTime: null,
   models: [],
-  spiders: []
+  spiders: [],
+  flamethrower: new Flamethrower()
 }
 
 // Listen to user input
@@ -51,8 +54,15 @@ document.addEventListener('keyup', function (e) {
 
 canvas.addEventListener('click', function (e) {
   if (!document.pointerLockElement) canvas.requestPointerLock()
-  var action = config.CONTROLS.MOUSE[0]
+})
+
+canvas.addEventListener('mousedown', function (e) {
+  var action = config.CONTROLS.MOUSE[e.which]
   if (action) state.actions[action] = true
+})
+canvas.addEventListener('mouseup', function (e) {
+  var action = config.CONTROLS.MOUSE[e.which]
+  if (action) state.actions[action] = false
 })
 
 canvas.addEventListener('mousemove', function (e) {
@@ -68,6 +78,7 @@ document.addEventListener('visibilitychange', function () {
   }
 })
 
+// Canvas size, fullscreen, pointer lock
 resizeCanvas()
 window.addEventListener('resize', resizeCanvas)
 
@@ -104,23 +115,42 @@ regl.frame(frame)
 // Renders each frame. Should run at 60Hz.
 // Stops running if the canvas is not visible, for example because the window is minimized.
 function frame (context) {
-  regl.clear({ color: [0.1, 0.1, 0.4, 1], depth: 1 })
+  regl.clear({ color: [0.1, 0.1, 0.4, 1], depth: 1 }) // it's dusk outside
 
-  // Update, except on the first frame where there is no dt
-  if (state.lastFrameTime) {
-    var dt = context.time - state.lastFrameTime
-    playerControls.tick(state, dt)
+  // Measure frame time. Should be 1/60th of a second (60FPS)
+  var MIN_DT = 0.01 // bad things happen if dt is <=0
+  var MAX_DT = 0.1 // bad things happen if player tabs away, then comes back and dt is many seconds
+  var lastt = state.lastFrameTime
+  var dt = lastt ? Math.min(MAX_DT, Math.max(MIN_DT, context.time - lastt)) : MIN_DT
 
-    // Swarm the spiders, and occasionally spawn a new one
-    state.spiders.forEach(function (spider) { spider.tick(dt) })
-    if (Math.random() < 0.01) {
-      state.spiders.push(new Spider((Math.random() * 0.005) + 0.01))
-    }
+  // Take input from the player, move, look around
+  playerControls.tick(state, dt)
 
-    sound.tick(state)
+  // Swarm the spiders, and occasionally spawn a new one
+  state.spiders.forEach(function (spider) { spider.tick(dt) })
+  if (Math.random() < 0.01) {
+    state.spiders.push(new Spider((Math.random() * 0.005) + 0.01))
   }
 
-  // Draw the scene
+  // Simulate the flamethrower and flames
+  var loc = state.player.location
+  var dir = state.player.direction
+  var right = coordinates.toCartesian(dir.azimuth - Math.PI / 2, 0, 0.20)
+  state.flamethrower.location = {
+    x: loc.x + right[0],
+    y: loc.y + right[1],
+    z: loc.z - 0.30 // flamethrower starts below and to the right of the camera
+  }
+  state.flamethrower.direction = {
+    azimuth: dir.azimuth + 0.1, // point slightly left, FPS style
+    altitude: Math.min(1.2, Math.max(-1.2, dir.altitude)) // don't let them flame themselves
+  }
+  state.flamethrower.tick(dt)
+
+  // Sounds
+  sound.tick(state)
+
+  // Visuals
   scope(state, function (context) {
     state.models.forEach(function (model) {
       model.draw(context)
@@ -128,6 +158,7 @@ function frame (context) {
     state.spiders.forEach(function (spider) {
       spider.draw(context)
     })
+    state.flamethrower.draw(context)
   })
 
   state.lastFrameTime = context.time

@@ -16,7 +16,7 @@ module.exports = {
       ' ': 'jump'
     },
     MOUSE: {
-      0: 'attack'
+      1: 'attack'
     },
     MOUSE_SENSITIVITY: 0.005 // radians per pixel
   },

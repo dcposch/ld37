@@ -114,7 +114,7 @@ function compileDraw (tv) {
     count: 6
   })
 
-  return function (context, props) {
+  return function (context) {
     // Animate. Figure out which frame to show
     // TODO: refactor if we need to animate anything else
     var numRows = 8
@@ -140,7 +140,7 @@ function compileDraw (tv) {
     ]
     tv.screen.attributes.aVertexUV.subdata(uvs)
 
-    drawBezel(context, props)
-    drawScreen(context, props)
+    drawBezel(context)
+    drawScreen(context)
   }
 }
