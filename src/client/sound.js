@@ -19,13 +19,14 @@ var VOLUME = {
   'start': 0.7,
   'footsteps': 0.2,
   'iron-horse': 0.6,
-  'bangarang': 0.6
+  'bangarang': 0.6,
+  'spider-walk': 0.5
 }
 
 // Cache <audio> elements for instant playback
 var cache = {}
 var currentBackground = null
-var wasWalking = false
+var isPlaying = {}
 
 // Preload short sound files
 function preload () {
@@ -39,19 +40,25 @@ function preload () {
 exports.preload = preload
 
 function tick (state) {
+  // Walking sound
   var isWalking = (
     state.actions['forward'] || state.actions['back'] ||
     state.actions['left'] || state.actions['right']
   )
-
-  if (isWalking && !wasWalking) {
+  if (isWalking && !isPlaying.footsteps) {
     startPlay('footsteps')
   }
-  if (wasWalking && !isWalking) {
+  if (!isWalking && isPlaying.footsteps) {
     stopPlay('footsteps')
   }
 
-  wasWalking = isWalking
+  // Spider sounds
+  if (state.spiders.length > 0 && !isPlaying['spider-walk']) {
+    startPlay('spider-walk')
+  }
+  if (state.spiders.length === 0 && isPlaying['spider-walk']) {
+    stopPlay('spider-walk')
+  }
 }
 exports.tick = tick
 
@@ -96,13 +103,15 @@ exports.startBackground = startBackground
 function startPlay (name) {
   var audio = play(name)
   audio.loop = true
+  isPlaying[name] = true
 }
 exports.startPlay = startPlay
 
 function stopPlay (name) {
+  if (!isPlaying[name]) return
   var audio = cache[name]
-  if (!audio) return
   audio.pause()
+  delete isPlaying[name]
 }
 exports.stopPlay = stopPlay
 
