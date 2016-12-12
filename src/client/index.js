@@ -102,7 +102,7 @@ regl.frame(frame)
 // Renders each frame. Should run at 60Hz.
 // Stops running if the canvas is not visible, for example because the window is minimized.
 function frame (context) {
-  regl.clear({ color: [1, 1, 1, 1], depth: 1 })
+  regl.clear({ color: [0.1, 0.1, 0.4, 1], depth: 1 })
 
   // Update, except on the first frame where there is no dt
   if (state.lastFrameTime) {

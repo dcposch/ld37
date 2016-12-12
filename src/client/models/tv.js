@@ -4,17 +4,18 @@ var textures = require('../textures')
 var config = require('../../config')
 var Poly8 = require('../geometry/poly8')
 var Mesh = require('../geometry/mesh')
+var makeUVs = require('../geometry/uv')
 
 var RW = config.WORLD.ROOM_WIDTH
 
 // TV width (x dimension), depth (y dimension), height (z dimension)
 var W = 1.6
-var D = 0.1
+var D = 0.5
 var H = 1.0
 
 // Bezel
-var B = 0.05 // bezel is 5 cm around outside of screen
-var S = 0.09 // screen is inset, 9cm from wall
+var B = 0.1 // bezel is 10 cm around outside of screen
+var S = 0.41 // screen 41cm from wall
 
 // Mounted 1m above the ground on the +Y wall
 var MH = 1
@@ -32,11 +33,20 @@ TV.prototype.intersect = function (x, y, z) {
 }
 
 function makeBezelPolys () {
+  var texW = 64
+  var texH = 64
+  var uvsV = makeUVs(B, D, H, texW, texH) // vertical
+  var uvsH = makeUVs(W - 2 * B, B, D, texW, texH) // horizontal
+
   var polys = []
-  polys.push(Poly8.axisAligned(-W / 2, RW / 2 - D, MH, -W / 2 + B, RW / 2, MH + H))
-  polys.push(Poly8.axisAligned(W / 2 - B, RW / 2 - D, MH, W / 2, RW / 2, MH + H))
-  polys.push(Poly8.axisAligned(-W / 2 + B, RW / 2 - D, MH + H - B, W / 2 - B, RW / 2, MH + H))
-  polys.push(Poly8.axisAligned(-W / 2 + B, RW / 2 - D, MH, W / 2 - B, RW / 2, MH + B))
+  var YBB = RW / 2 - D + B // y coordinate back of bezel
+  var YBF = RW / 2 - D // front of bezel
+  polys.push(Poly8.axisAligned(-W / 2, YBF, MH, -W / 2 + B, YBB, MH + H, uvsV))
+  polys.push(Poly8.axisAligned(W / 2 - B, YBF, MH, W / 2, YBB, MH + H, uvsV))
+  polys.push(Poly8.axisAligned(-W / 2 + B, YBF, MH + H - B, W / 2 - B, YBB, MH + H, uvsH))
+  polys.push(Poly8.axisAligned(-W / 2 + B, YBF, MH, W / 2 - B, YBB, MH + B, uvsH))
+  // Make it look like a CRT
+  polys.push(Poly8.axisAligned(-W / 2 + B, YBB, MH, W / 2 - B, RW / 2, MH + H - B, uvsH))
   return polys
 }
 
@@ -60,8 +70,8 @@ function makeScreen () {
     [1, 0],
     [1, 1]
   ]
-  // var getTriangleIndices = function (i) { return [i * 3, i * 3 + 1, i * 3 + 2] }
-  var elems = [0, 1, 2, 2, 1, 3] // .map(getTriangleIndices)
+  var elems = [0, 1, 2, 2, 1, 3]
+
   return {
     attributes: {
       aVertexPosition: regl.buffer(verts),
@@ -86,7 +96,7 @@ function compileDraw (tv) {
       aVertexUV: regl.buffer(meshBezel.uvs)
     },
     uniforms: {
-      uTexture: textures.room
+      uTexture: textures.wood
     },
     count: meshBezel.verts.length
   })
@@ -96,7 +106,7 @@ function compileDraw (tv) {
     vert: shaders.vert.uvWorld,
     attributes: tv.screen.attributes,
     uniforms: {
-      uTexture: textures.smash
+      uTexture: textures.netflix
     },
     elements: tv.screen.elements,
     count: 6
@@ -105,18 +115,26 @@ function compileDraw (tv) {
   return function (context, props) {
     // Animate. Figure out which frame to show
     // TODO: refactor if we need to animate anything else
-    var numFrames = 1
-    var startTime = 1
-    var duration = 3
-    var t = Math.max(0, Math.min(0.9999, (context.time - startTime) / duration)) // range [0, 1)
+    var numRows = 8
+    var numCols = 4
+    var numFrames = numRows * numCols
+    var duration = 3 // seconds
+    var mod = (context.time % (duration * 4)) / duration
+    var t
+    if (mod < 1) t = 0
+    else if (mod < 2) t = mod - 1
+    else if (mod <= 3) t = 1
+    else t = 4 - mod
     var frame = Math.floor(t * numFrames)
-    var v0 = (numFrames - frame - 1) / numFrames
-    var v1 = (numFrames - frame) / numFrames
+    var u0 = (frame % numCols) / numCols
+    var u1 = u0 + 1 / numCols
+    var v0 = Math.floor(frame / numCols) / numRows
+    var v1 = v0 + 1 / numRows
     var uvs = [
-      [0, v0],
-      [0, v1],
-      [1, v0],
-      [1, v1]
+      [u0, v0],
+      [u0, v1],
+      [u1, v0],
+      [u1, v1]
     ]
     tv.screen.attributes.aVertexUV.subdata(uvs)
 
