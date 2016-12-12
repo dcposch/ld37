@@ -167,7 +167,7 @@ function makeLegMesh () {
   var d = 2
   var h = 2
   var uvs = getUVs(x, y, z, w, d, h, 27, 0)
-  return Poly8.axisAligned(x, y, z, w, d, h, uvs).createMesh()
+  return Poly8.axisAligned(x, y, z, x+w, y+d, z+h, uvs).createMesh()
 }
 
 function getUVs (x, y, z, w, d, h, u, v) {
