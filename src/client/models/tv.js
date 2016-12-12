@@ -29,7 +29,9 @@ function TV () {
 }
 
 TV.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
-  return false
+  return makeBezelPolys().some(function (poly) {
+    return poly.intersect(x0, x1, y0, y1, z0, z1)
+  })
 }
 
 function makeBezelPolys () {
