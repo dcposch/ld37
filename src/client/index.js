@@ -92,7 +92,8 @@ var scope = regl({
   uniforms: {
     uMatrix: camera.updateMatrix,
     uLightPos: [0, 0, config.WORLD.ROOM_HEIGHT - 0.2],
-    uLightColor: [1, 0.9, 0.8]
+    uLightColor: [1, 0.8, 0.7],
+    uNumSpiders: regl.prop('spiders.length')
   }
 })
 
@@ -111,7 +112,7 @@ function frame (context) {
 
     // Swarm the spiders, and occasionally spawn a new one
     state.spiders.forEach(function (spider) { spider.tick(dt) })
-    if (Math.random() < 0.001) state.spiders.push(new Spider())
+    if (Math.random() < 0.01) state.spiders.push(new Spider())
 
     sound.tick(state)
   }
