@@ -34,8 +34,8 @@ function Spider (scale) {
 
 Spider.prototype.intersect = function (x0, x1, y0, y1, z0, z1) {
   var loc = this.location
-  var radius = SCALE_RADIUS * this.scale
-  var poly = Poly8.axisAligned(loc.x - radius, loc.y - radius, loc.z - radius, loc.x + radius, loc.y + radius, loc.z + radius)
+  var r = SCALE_RADIUS * this.scale
+  var poly = Poly8.axisAligned(loc.x - r, loc.y - r, loc.z - r, loc.x + r, loc.y + r, loc.z + r)
   return poly.intersect(x0, x1, y0, y1, z0, z1)
 }
 

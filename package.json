@@ -13,6 +13,7 @@
   "dependencies": {
     "express": "^4.14.0",
     "gl-mat4": "^1.1.4",
+    "gl-vec2": "^1.0.0",
     "gl-vec3": "^1.0.3",
     "regl": "^1.2.1",
     "rimraf": "^2.5.4"

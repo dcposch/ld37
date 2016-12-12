@@ -43,7 +43,7 @@ function gameplay (state, dt) {
     }
 
     // Remove the spiders in reverse
-    for (var i = spidersToRemove.length - 1; i >= 0; i--) {
+    for (i = spidersToRemove.length - 1; i >= 0; i--) {
       state.spiders.splice(spidersToRemove[i], 1)
       state.player.score++
     }

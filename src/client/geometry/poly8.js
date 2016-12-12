@@ -1,5 +1,7 @@
 var validate = require('./validate')
 var Mesh = require('./mesh')
+var vec3 = require('gl-vec3')
+var vec2 = require('gl-vec2')
 
 module.exports = Poly8
 
@@ -45,12 +47,12 @@ Poly8.prototype.createMesh = function () {
       var iy = i >> 1 === 1 ? i % 2 : vi[i >> 2]
       var iz = i >> 1 === 2 ? i % 2 : vi[1]
       var vert = this.verts[ix * 4 + iy * 2 + iz]
-      verts.push(vert)
+      verts.push(vec3.clone(vert))
 
-      norms.push([nx, ny, nz])
+      norms.push(vec3.clone([nx, ny, nz]))
 
       var uv = faceUVs ? [faceUVs[vi[0] * 2], faceUVs[vi[1] * 2 + 1]] : vi
-      uvs.push(uv)
+      uvs.push(vec2.clone(uv))
     }
   }
 
