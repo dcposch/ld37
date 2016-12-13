@@ -22,28 +22,50 @@ function tick (state, dt) {
 
 // Check for user attacks
 function gameplay (state, dt) {
+  var player = state.player
+  var loc = player.location
+  var spiders = state.spiders
+
   if (state.actions['attack']) {
     state.flamethrower.shoot()
+  }
 
-    var player = state.player
-    var loc = player.location
+  // Check each spider to see if player hit it, or it hit the player
+  for (var i = 0; i < spiders.length; i++) {
+    // Check if player hit spider
+    var didHit = state.actions['attack'] && spiders[i].intersect(
+      loc.x - SPIDER_ATTACK_RANGE,
+      loc.x + SPIDER_ATTACK_RANGE,
+      loc.y - SPIDER_ATTACK_RANGE,
+      loc.y + SPIDER_ATTACK_RANGE,
+      loc.z - PH,
+      loc.z
+    )
 
-    // Try just getting a big box around me
-    var x0 = loc.x - SPIDER_ATTACK_RANGE
-    var x1 = loc.x + SPIDER_ATTACK_RANGE
-    var y0 = loc.y - SPIDER_ATTACK_RANGE
-    var y1 = loc.y + SPIDER_ATTACK_RANGE
-    var z0 = loc.z - PH
-    var z1 = loc.z
+    if (didHit) {
+      // Remove spider
+      spiders.splice(i, 1)
 
-    // Remove spiders that we've hit, and increase the score
-    var spiders = state.spiders
-    for (var i = 0; i < spiders.length; i++) {
-      if (spiders[i].intersect(x0, x1, y0, y1, z0, z1)) {
-        spiders.splice(i, 1)
-        i -= 1
-        state.player.score += 1
-      }
+      // Increment score
+      state.player.score += 1
+
+      // Continue the loop
+      i -= 1
+      continue
+    }
+
+    // Check if spider hit the player
+    var wasHit = spiders[i].intersect(
+      loc.x - PW * 2,
+      loc.x + PW * 2,
+      loc.y - PW * 2,
+      loc.y + PW * 2,
+      loc.z - PH,
+      loc.z + PH
+    )
+
+    if (wasHit) {
+      state.restartGame()
     }
   }
 }

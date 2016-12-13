@@ -17,7 +17,7 @@ void main(void) {
   // Lighting
   vec3 lightVec = uLightPos - vPosition;
   // Light intensity falls off with square of distance
-  float multDist = 1.0 / (1.0 + dot(lightVec, lightVec) * 0.01 * uNumSpiders);
+  float multDist = 1.0 / (1.0 + dot(lightVec, lightVec) * 0.005 * uNumSpiders);
   // Light mostly only hits surfaces that are facing the light
   float lightDot = dot(normalize(lightVec), vNormal);
   float multDot = sqrt(0.25 + lightDot * lightDot);

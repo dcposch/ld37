@@ -180,7 +180,6 @@ function makeLegMesh () {
 
 function getUVs (x, y, z, w, d, h, u, v) {
   function makeUV (iu, iv, iw, ih) {
-    console.log([iu / 64, iv / 32, (iu + iw) / 64, (iv + ih) / 32])
     return [iu / 64, iv / 32, (iu + iw) / 64, (iv + ih) / 32]
   }
   return [

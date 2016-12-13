@@ -13,10 +13,7 @@ var Spider = require('./models/spider')
 var Flamethrower = require('./models/flamethrower')
 
 sound.preload()
-
-sound.play('start').once('play', function () {
-  setTimeout(function () { sound.startBackground(1) }, 5000)
-})
+sound.play('start')
 
 // All game state lives here
 var state = {
@@ -37,7 +34,24 @@ var state = {
   lastFrameTime: null,
   models: [],
   spiders: [new Spider()],
-  flamethrower: new Flamethrower()
+  flamethrower: new Flamethrower(),
+  restartGame: restartGame // RESTARTS THE GAME
+}
+
+function restartGame () {
+  state.player = {
+    // Block coordinates of the player's head (the camera). +Z is up. When facing +X, +Y is left.
+    location: { x: 0, y: 2, z: config.PHYSICS.PLAYER_HEIGHT },
+    // Azimuth ranges from 0 (looking down the +X axis) to 2*pi. Azimuth pi/2 looks at +Y.
+    // Altitude ranges from -pi/2 (looking straight down) to pi/2 (up). 0 looks straight ahead.
+    direction: { azimuth: Math.PI / 2, altitude: -Math.PI / 8 },
+    // Physics
+    dzdt: 0,
+    // Situation can also be 'on-ground', 'suffocating'
+    situation: 'airborne',
+    score: 0
+  }
+  state.spiders = [new Spider()]
 }
 
 // Listen to user input
@@ -129,9 +143,9 @@ function frame (context) {
 
   // Swarm the spiders, and occasionally spawn a new one
   state.spiders.forEach(function (spider) { spider.tick(dt) })
-  if (Math.random() < (state.player.score ? 0.005 + (state.player.score * 0.00025) : 0)) {
+  if (Math.random() < (state.player.score ? 0.005 + (state.player.score * 0.0002) : 0)) {
     state.spiders.push(new Spider(
-      0.0075 + (Math.random() * state.player.score * 0.00025),
+      0.01 + (Math.random() * state.player.score * 0.0001),
       state.player.score > 10 && Math.random() < 0.4
     ))
   }
