@@ -13,8 +13,9 @@ var Spider = require('./models/spider')
 var Flamethrower = require('./models/flamethrower')
 
 sound.preload()
-sound.play('start', {
-  playing: function () { setTimeout(function () { sound.startBackground(1) }, 5000) }
+
+sound.play('start').once('play', function () {
+  setTimeout(function () { sound.startBackground(1) }, 5000)
 })
 
 // All game state lives here

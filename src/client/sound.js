@@ -1,3 +1,5 @@
+var Howl = require('howler').Howl
+
 var SFX = [
   'bite',
   'footsteps',
@@ -8,6 +10,13 @@ var SFX = [
   'start',
   'flamethrower'
 ]
+
+var OGG = [
+]
+
+var SPRITE = {
+  'flamethrower': [100, 1000, true]
+}
 
 var BACKGROUND_MUSIC = [
   'the-escalation', // level 1
@@ -33,10 +42,11 @@ var isPlaying = {}
 // Preload short sound files
 function preload () {
   SFX.forEach(function (name) {
-    var audio = new window.Audio()
-    audio.src = 'sound/' + name + '.mp3'
-    audio.preload = true
-    cache[name] = audio
+    cache[name] = new Howl({
+      src: 'sound/' + name + (OGG.includes(name) ? '.ogg' : '.mp3'),
+      volume: VOLUME[name] || 1,
+      sprite: SPRITE[name] && { main: SPRITE[name] }
+    })
   })
 }
 exports.preload = preload
@@ -74,20 +84,18 @@ exports.tick = tick
 
 // Takes a name (for short sounds) or a URL (for larger files, not in git)
 // Optionally takes a time offset in seconds
-function play (name, opts) {
-  if (!opts) opts = {}
-
+function play (name) {
   var audio = cache[name]
   if (!audio) {
-    audio = new window.Audio()
-    audio.src = 'sound/' + name + '.mp3'
-    cache[name] = audio
+    audio = cache[name] = new Howl({
+      src: 'sound/' + name + (OGG[name] ? '.ogg' : '.mp3'),
+      html5: true,
+      volume: VOLUME[name] || 1
+    })
   }
-  audio.volume = VOLUME[name] || 1
-  audio.currentTime = 0
-  audio.play()
-
-  addEvents(audio, opts)
+  audio.volume(VOLUME[name] || 1)
+  audio.seek(0)
+  audio.play(SPRITE[name] ? 'main' : undefined)
 
   return audio
 }
@@ -99,7 +107,7 @@ function startBackground (num) {
   var volume = VOLUME[name] || 1
 
   var audio = play(name)
-  audio.loop = true
+  audio.loop(true)
 
   if (currentBackground) {
     crossfade(currentBackground, audio, volume)
@@ -112,7 +120,7 @@ exports.startBackground = startBackground
 
 function startPlay (name) {
   var audio = play(name)
-  audio.loop = true
+  audio.loop(true)
   isPlaying[name] = true
 }
 exports.startPlay = startPlay
@@ -128,39 +136,21 @@ exports.stopPlay = stopPlay
 /**
  * Slowly increase the volume of an audio tag.
  */
-function fadeIn (audio, volume, ms) {
+function fadeIn (audio, volume) {
   volume = volume || 1
-  ms = ms || 2500
-  var increment = audio.volume / (ms / 50)
-  var interval
-
-  audio.volume = 0
-
-  addEvents(audio, {
-    // Wait until audio starts to play before increasing volume
-    playing: function () { interval = setInterval(onInterval, 50) }
+  audio.once('play', function () {
+    audio.fade(0, volume)
   })
-
-  function onInterval () {
-    audio.volume = Math.min(audio.volume + increment, volume)
-    if (audio.volume === volume) clearInterval(interval)
-  }
 }
 
 /**
  * Slowly decrease the volume of an audio tag.
  */
-function fadeOut (audio, ms) {
-  ms = ms || 2500
-  var increment = audio.volume / (ms / 50)
-  var interval = setInterval(onInterval, 50)
-  function onInterval () {
-    audio.volume = Math.max(audio.volume - increment, 0)
-    if (audio.volume === 0) {
-      audio.pause()
-      clearInterval(interval)
-    }
-  }
+function fadeOut (audio) {
+  audio.fade(audio.volume(), 0, 2500)
+  audio.once('fade', function () {
+    audio.pause()
+  })
 }
 
 /**
@@ -169,26 +159,12 @@ function fadeOut (audio, ms) {
  */
 function crossfade (oldAudio, newAudio, newVolume) {
   fadeIn(newAudio, newVolume)
-  addEvents(newAudio, {
-    // Wait until new audio begins to play before fading out the old audio, so
-    // they line up perfectly
-    playing: function () { fadeOut(oldAudio) }
-  })
-}
 
-/**
- * Helper to add events to an audio tag
- * @param {[type]} audio [description]
- * @param {[type]} opts  [description]
- */
-function addEvents (audio, opts) {
-  for (var eventName in opts) {
-    var onEvent = function () {
-      audio.removeEventListener(eventName, onEvent)
-      opts[eventName]()
-    }
-    audio.addEventListener(eventName, onEvent)
-  }
+  // Wait until new audio begins to play before fading out the old audio, so
+  // they line up perfectly
+  newAudio.once('play', function () {
+    fadeOut(oldAudio)
+  })
 }
 
 // for easier debugging
