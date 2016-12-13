@@ -1,4 +1,5 @@
 var config = require('../config')
+var sound = require('./sound')
 
 module.exports = {
   tick: tick
@@ -26,6 +27,10 @@ function gameplay (state, dt) {
   var loc = player.location
   var spiders = state.spiders
 
+  if (state.actions['jump'] && state.player.situation === 'dead') {
+    state.restartGame()
+  }
+
   if (state.actions['attack']) {
     state.flamethrower.shoot()
   }
@@ -46,6 +51,12 @@ function gameplay (state, dt) {
       // Remove spider
       spiders.splice(i, 1)
 
+      if (Math.random() < 0.5) {
+        sound.play('spider-death')
+      } else {
+        sound.play('spider-death2')
+      }
+
       // Increment score
       state.player.score += 1
 
@@ -65,7 +76,8 @@ function gameplay (state, dt) {
     )
 
     if (wasHit) {
-      state.restartGame()
+      document.body.classList.add('dead')
+      state.player.situation = 'dead'
     }
   }
 }

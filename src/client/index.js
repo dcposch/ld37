@@ -39,6 +39,7 @@ var state = {
 }
 
 function restartGame () {
+  document.body.classList.remove('dead')
   state.player = {
     // Block coordinates of the player's head (the camera). +Z is up. When facing +X, +Y is left.
     location: { x: 0, y: 2, z: config.PHYSICS.PLAYER_HEIGHT },
@@ -130,7 +131,11 @@ regl.frame(frame)
 // Renders each frame. Should run at 60Hz.
 // Stops running if the canvas is not visible, for example because the window is minimized.
 function frame (context) {
-  regl.clear({ color: [0.1, 0.1, 0.4, 1], depth: 1 }) // it's dusk outside
+  if (state.player.situation === 'dead') {
+    regl.clear({ color: [1, 0.1, 0.2, 1], depth: 1 })
+  } else {
+    regl.clear({ color: [0.1, 0.1, 0.4, 1], depth: 1 }) // it's dusk outside
+  }
 
   // Measure frame time. Should be 1/60th of a second (60FPS)
   var MIN_DT = 0.01 // bad things happen if dt is <=0
@@ -143,9 +148,9 @@ function frame (context) {
 
   // Swarm the spiders, and occasionally spawn a new one
   state.spiders.forEach(function (spider) { spider.tick(dt) })
-  if (Math.random() < (state.player.score ? 0.005 + (state.player.score * 0.0002) : 0)) {
+  if (Math.random() < (state.player.score ? 0.0075 + (state.player.score * 0.00025) : 0)) {
     state.spiders.push(new Spider(
-      0.01 + (Math.random() * state.player.score * 0.0001),
+      0.01 + (Math.random() * state.player.score * (state.player.score < 15 ? 0.0001 : state.player.score < 60 ? 0.0002 : 0.0003)),
       state.player.score > 10 && Math.random() < 0.4
     ))
   }

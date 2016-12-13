@@ -5,8 +5,8 @@ var SFX = [
   'footsteps',
   'spider-walk',
   'spawn1',
-  'spawn2',
-  'spawn3',
+  'spider-death',
+  'spider-death2',
   'start',
   'flamethrower'
 ]
@@ -18,7 +18,7 @@ var SPRITE = {
   'flamethrower': [100, 1000, true]
 }
 
-var BACKGROUND_MUSIC = [
+var LEVEL_MUSIC = [
   'the-escalation', // level 1
   'iron-horse',     // level 2
   'bangarang'       // level 3
@@ -30,13 +30,15 @@ var VOLUME = {
   'footsteps': 0.2,
   'iron-horse': 0.6,
   'bangarang': 0.6,
-  'spider-walk': 0.3,
-  'flamethrower': 0.1
+  'spider-walk': 0.2,
+  'flamethrower': 0.1,
+  'spider-death': 0.15,
+  'spider-death2': 0.15
 }
 
 // Cache <audio> elements for instant playback
 var cache = {}
-var currentBackground = null
+var currentLevel = 0
 var isPlaying = {}
 
 // Preload short sound files
@@ -52,6 +54,10 @@ function preload () {
 exports.preload = preload
 
 function tick (state) {
+  // Set level music
+  var desiredLevel = state.player.score < 20 ? 1 : state.player.score < 60 ? 2 : 3
+  if (currentLevel !== desiredLevel) startLevel(desiredLevel)
+
   // Walking sound
   var isWalking = (
     state.actions['forward'] || state.actions['back'] ||
@@ -102,21 +108,22 @@ function play (name) {
 exports.play = play
 
 // Start playing music for given level (should be: 1, 2, 3)
-function startBackground (num) {
-  var name = BACKGROUND_MUSIC[num - 1]
+function startLevel (level) {
+  var num = level - 1
+  var name = LEVEL_MUSIC[num]
   var volume = VOLUME[name] || 1
 
   var audio = play(name)
   audio.loop(true)
 
-  if (currentBackground) {
-    crossfade(currentBackground, audio, volume)
+  if (currentLevel) {
+    crossfade(cache[LEVEL_MUSIC[currentLevel - 1]], audio, volume)
   } else {
     fadeIn(audio, volume)
   }
-  currentBackground = audio
+  currentLevel = level
 }
-exports.startBackground = startBackground
+exports.startLevel = startLevel
 
 function startPlay (name) {
   var audio = play(name)
