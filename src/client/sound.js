@@ -21,7 +21,8 @@ var SPRITE = {
 var LEVEL_MUSIC = [
   'the-escalation', // level 1
   'iron-horse',     // level 2
-  'bangarang'       // level 3
+  'bangarang',      // level 3
+  'night-of-chaos'  // dead, a.k.a. level 4
 ]
 
 // Custom volumes for certain sounds, all others will be 1
@@ -30,6 +31,7 @@ var VOLUME = {
   'footsteps': 0.2,
   'iron-horse': 0.6,
   'bangarang': 0.6,
+  'night-of-chaos': 0.7,
   'spider-walk': 0.2,
   'flamethrower': 0.1,
   'spider-death': 0.15,
@@ -55,8 +57,15 @@ exports.preload = preload
 
 function tick (state) {
   // Set level music
-  var desiredLevel = state.player.score < 20 ? 1 : state.player.score < 60 ? 2 : 3
+  var desiredLevel = state.player.alive
+    ? (state.player.score < 20 ? 1 : state.player.score < 60 ? 2 : 3)
+    : 4
   if (currentLevel !== desiredLevel) startLevel(desiredLevel)
+
+  if (!state.player.alive) {
+    if (isPlaying.footsteps) stopPlay('footsteps')
+    if (isPlaying['spider-walk']) stopPlay('spider-walk')
+  }
 
   // Walking sound
   var isWalking = (

@@ -27,7 +27,8 @@ var state = {
     dzdt: 0,
     // Situation can also be 'on-ground', 'suffocating'
     situation: 'airborne',
-    score: 0
+    score: 0,
+    alive: true
   },
   actions: {},
   mouse: {dx: 0, dy: 0},
@@ -37,6 +38,7 @@ var state = {
   flamethrower: new Flamethrower(),
   restartGame: restartGame // RESTARTS THE GAME
 }
+createModels()
 
 function restartGame () {
   document.body.classList.remove('dead')
@@ -50,9 +52,20 @@ function restartGame () {
     dzdt: 0,
     // Situation can also be 'on-ground', 'suffocating'
     situation: 'airborne',
-    score: 0
+    score: 0,
+    alive: true
   }
+  state.actions = {}
+  state.models = []
+  createModels()
   state.spiders = [new Spider()]
+}
+
+function createModels () {
+  // Create the world
+  state.models.push(new Room())
+  state.models.push(new Couch())
+  state.models.push(new TV())
 }
 
 // Listen to user input
@@ -111,11 +124,6 @@ document.querySelector('#fullscreen').addEventListener('click', function (e) {
   if (!document.pointerLockElement) canvas.requestPointerLock()
 })
 
-// Create the world
-state.models.push(new Room())
-state.models.push(new Couch())
-state.models.push(new TV())
-
 var scope = regl({
   uniforms: {
     uMatrix: camera.updateMatrix,
@@ -131,10 +139,10 @@ regl.frame(frame)
 // Renders each frame. Should run at 60Hz.
 // Stops running if the canvas is not visible, for example because the window is minimized.
 function frame (context) {
-  if (state.player.situation === 'dead') {
-    regl.clear({ color: [1, 0.1, 0.2, 1], depth: 1 })
-  } else {
+  if (state.player.alive) {
     regl.clear({ color: [0.1, 0.1, 0.4, 1], depth: 1 }) // it's dusk outside
+  } else {
+    regl.clear({ color: [1, 0.1, 0.2, 1], depth: 1 })
   }
 
   // Measure frame time. Should be 1/60th of a second (60FPS)
@@ -147,7 +155,7 @@ function frame (context) {
   playerControls.tick(state, dt)
 
   // Swarm the spiders, and occasionally spawn a new one
-  state.spiders.forEach(function (spider) { spider.tick(dt) })
+  if (state.player.alive) state.spiders.forEach(function (spider) { spider.tick(dt) })
   if (Math.random() < (state.player.score ? 0.0075 + (state.player.score * 0.00025) : 0)) {
     state.spiders.push(new Spider(
       0.01 + (Math.random() * state.player.score * (state.player.score < 15 ? 0.0001 : state.player.score < 60 ? 0.0002 : 0.0003)),

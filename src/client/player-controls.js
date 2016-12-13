@@ -1,5 +1,6 @@
 var config = require('../config')
 var sound = require('./sound')
+var Room = require('./models/room')
 
 module.exports = {
   tick: tick
@@ -15,6 +16,12 @@ var SPIDER_ATTACK_RANGE = 1.5
 // Calculates player physics. Lets the player move and look around.
 function tick (state, dt) {
   dt = Math.min(dt, 0.1)
+  if (!state.player.alive) {
+    if (state.actions['jump']) {
+      state.restartGame()
+    }
+    return // do not allow gameplay if player is dead
+  }
   gameplay(state, dt)
   navigate(state, dt)
   simulate(state, dt)
@@ -26,10 +33,6 @@ function gameplay (state, dt) {
   var player = state.player
   var loc = player.location
   var spiders = state.spiders
-
-  if (state.actions['jump'] && state.player.situation === 'dead') {
-    state.restartGame()
-  }
 
   if (state.actions['attack']) {
     state.flamethrower.shoot()
@@ -76,8 +79,12 @@ function gameplay (state, dt) {
     )
 
     if (wasHit) {
+      sound.play('bite')
       document.body.classList.add('dead')
-      state.player.situation = 'dead'
+      state.player.alive = false
+      state.models = state.models.filter(function (model) {
+        return !(model instanceof Room)
+      })
     }
   }
 }
