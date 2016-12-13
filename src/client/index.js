@@ -74,11 +74,13 @@ document.addEventListener('keydown', function (e) {
   if (!document.pointerLockElement) canvas.requestPointerLock()
   var action = config.CONTROLS.KEY[e.key]
   if (action) state.actions[action] = true
+  e.preventDefault()
 })
 
 document.addEventListener('keyup', function (e) {
   var action = config.CONTROLS.KEY[e.key]
   if (action) state.actions[action] = false
+  e.preventDefault()
 })
 
 canvas.addEventListener('click', function (e) {
