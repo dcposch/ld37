@@ -130,7 +130,10 @@ function frame (context) {
   // Swarm the spiders, and occasionally spawn a new one
   state.spiders.forEach(function (spider) { spider.tick(dt) })
   if (Math.random() < (state.player.score ? 0.005 + (state.player.score * 0.00025) : 0)) {
-    state.spiders.push(new Spider(0.0075 + (Math.random() * state.player.score * 0.00025)))
+    state.spiders.push(new Spider(
+      0.0075 + (Math.random() * state.player.score * 0.00025),
+      state.player.score > 10 && Math.random() < 0.4
+    ))
   }
 
   // Simulate the flamethrower and flames
