@@ -16,7 +16,7 @@ var bufferUVs = regl.buffer(meshTemplate.uvs) // same for all spiders
 var SCALE_RADIUS = 10
 
 function Spider (scale) {
-  this.scale = scale || 0.01
+  this.scale = scale || 0.005
   this.location = {x: 0, y: 0, z: 0}
   // Azimuth 0 points in the +Y direction.
   // Altitude 0 points straight ahead. +PI/2 points up at the sky (+Z). -PI/2 points down.

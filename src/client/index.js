@@ -36,7 +36,7 @@ var state = {
   mouse: {dx: 0, dy: 0},
   lastFrameTime: null,
   models: [],
-  spiders: [],
+  spiders: [new Spider()],
   flamethrower: new Flamethrower()
 }
 
@@ -129,8 +129,8 @@ function frame (context) {
 
   // Swarm the spiders, and occasionally spawn a new one
   state.spiders.forEach(function (spider) { spider.tick(dt) })
-  if (Math.random() < 0.01) {
-    state.spiders.push(new Spider((Math.random() * 0.005) + 0.01))
+  if (Math.random() < (state.player.score ? 0.005 + (state.player.score * 0.00025) : 0)) {
+    state.spiders.push(new Spider(0.0075 + (Math.random() * state.player.score * 0.00025)))
   }
 
   // Simulate the flamethrower and flames

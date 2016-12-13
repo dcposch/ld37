@@ -38,13 +38,13 @@ function gameplay (state, dt) {
 
     // Remove spiders that we've hit, and increase the score
     var spiders = state.spiders
-    var offset = 0
     for (var i = 0; i < spiders.length; i++) {
-      spiders[i - offset] = spiders[i]
-      if (spiders[i].intersect(x0, x1, y0, y1, z0, z1)) offset++
+      if (spiders[i].intersect(x0, x1, y0, y1, z0, z1)) {
+        spiders.splice(i, 1)
+        i -= 1
+        state.player.score += 1
+      }
     }
-    spiders.length -= offset
-    state.player.score += offset
   }
 }
 

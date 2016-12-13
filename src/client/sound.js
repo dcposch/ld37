@@ -31,7 +31,7 @@ var VOLUME = {
   'iron-horse': 0.6,
   'bangarang': 0.6,
   'spider-walk': 0.3,
-  'flamethrower': 0.2
+  'flamethrower': 0.1
 }
 
 // Cache <audio> elements for instant playback
