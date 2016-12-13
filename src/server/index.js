@@ -12,7 +12,7 @@ function main () {
   app.use(express.static('static'))
   httpServer.on('request', app)
 
-  httpServer.listen(config.SERVER.PORT, function () {
+  httpServer.listen(process.argv[2] || config.SERVER.PORT, function () {
     console.log('Listening on ' + JSON.stringify(httpServer.address()))
   })
 }
