@@ -8,7 +8,7 @@ one room
 npm start
 ```
 
-then, go to `localhost:8080`
+then, go to `localhost:4000`
 
 ## ideas
 

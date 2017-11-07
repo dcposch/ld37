@@ -32,6 +32,6 @@ module.exports = {
     ROOM_HEIGHT: 3
   },
   SERVER: {
-    PORT: 8080
+    PORT: 4000
   }
 }
