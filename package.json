@@ -21,6 +21,7 @@
     "rimraf": "^2.5.4"
   },
   "devDependencies": {
+    "babel-minify": "^0.2.0",
     "brfs": "^1.4.3",
     "browserify": "^14.0.0",
     "mkdirp": "^0.5.1",
@@ -35,9 +36,8 @@
     "url": "git://github.com/dcposch/ld37.git"
   },
   "scripts": {
-    "clean": "rimraf build",
-    "build": "mkdirp build && browserify --debug src/client > build/bundle.js",
-    "start": "npm run clean && npm run build && node ./src/server",
+    "build": "rimraf build && mkdirp build && browserify src/client | minify > build/bundle.js",
+    "start": "npm run build && node ./src/server",
     "test": "standard",
     "watch": "npm run watch-js & npm run watch-server",
     "watch-js": "mkdirp build && watchify --debug src/client -o build/bundle.js",
