@@ -17,8 +17,7 @@
     "gl-vec2": "^1.0.0",
     "gl-vec3": "^1.0.3",
     "howler": "^2.0.2",
-    "regl": "^1.2.1",
-    "rimraf": "^2.5.4"
+    "regl": "^1.2.1"
   },
   "devDependencies": {
     "babel-minify": "^0.2.0",
@@ -36,7 +35,7 @@
     "url": "git://github.com/dcposch/ld37.git"
   },
   "scripts": {
-    "build": "rimraf build && mkdirp build && browserify src/client | minify > build/bundle.js",
+    "build": "mkdirp build && browserify src/client | minify > build/bundle.js",
     "start": "npm run build && node ./src/server",
     "test": "standard",
     "watch": "npm run watch-js & npm run watch-server",
