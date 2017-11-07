@@ -42,10 +42,5 @@
     "watch": "npm run watch-js & npm run watch-server",
     "watch-js": "mkdirp build && watchify --debug src/client -o build/bundle.js",
     "watch-server": "nodemon ./src/server -e js,css,glsl -i static/"
-  },
-  "standard": {
-    "ignore": [
-      "build/"
-    ]
   }
 }
