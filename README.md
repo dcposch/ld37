@@ -5,6 +5,7 @@ one room
 ## quick start
 
 ```
+npm run build
 npm start
 ```
 

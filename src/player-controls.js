@@ -1,4 +1,4 @@
-var config = require('../config')
+var config = require('./config')
 var sound = require('./sound')
 var Room = require('./models/room')
 

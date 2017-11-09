@@ -3,7 +3,7 @@ var shaders = require('../shaders')
 var textures = require('../textures').textures
 var Poly8 = require('../geometry/poly8')
 var Mesh = require('../geometry/mesh')
-var config = require('../../config')
+var config = require('../config')
 var mat4 = require('gl-mat4')
 
 module.exports = Spider

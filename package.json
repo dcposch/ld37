@@ -11,8 +11,6 @@
     "url": "https://github.com/dcposch/ld37/issues"
   },
   "dependencies": {
-    "compression": "^1.7.1",
-    "express": "^4.14.0",
     "gl-mat4": "^1.1.4",
     "gl-vec2": "^1.0.0",
     "gl-vec3": "^1.0.3",
@@ -23,23 +21,21 @@
     "babel-minify": "^0.2.0",
     "brfs": "^1.4.3",
     "browserify": "^14.0.0",
-    "mkdirp": "^0.5.1",
-    "nodemon": "^1.11.0",
+    "ecstatic": "^3.0.0",
     "standard": "*",
     "watchify": "^3.7.0"
   },
-  "license": "UNLICENSED",
+  "license": "-",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/dcposch/ld37.git"
   },
   "scripts": {
-    "build": "mkdirp build && browserify src/client | minify > build/bundle.js",
-    "start": "npm run build && node ./src/server",
+    "build": "browserify src | minify > static/bundle.js",
+    "start": "ecstatic static -p 4000",
     "test": "standard",
-    "watch": "npm run watch-js & npm run watch-server",
-    "watch-js": "mkdirp build && watchify --debug src/client -o build/bundle.js",
-    "watch-server": "nodemon ./src/server -e js,css,glsl -i static/"
+    "watch": "npm run watch-js & npm start",
+    "watch-js": "watchify --debug src -o static/bundle.js"
   }
 }

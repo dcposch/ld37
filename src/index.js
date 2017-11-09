@@ -1,5 +1,5 @@
 var camera = require('./camera')
-var config = require('../config')
+var config = require('./config')
 var fullscreen = require('./fullscreen')
 var playerControls = require('./player-controls')
 var sound = require('./sound')
