@@ -18,7 +18,6 @@ textures.load(init)
 function init (err) {
   if (err) return console.error(err)
 
-  console.log('HEY')
   Couch = require('./models/couch')
   Room = require('./models/room')
   TV = require('./models/tv')
