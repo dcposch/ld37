@@ -33,7 +33,8 @@
   },
   "scripts": {
     "build": "browserify src | minify > static/bundle.js",
-    "start": "ecstatic static -p 4000",
+    "deploy": "git push && ssh future 'cd ~/www/netflixandkill.club && git pull && npm install && npm run build'",
+    "start": "ecstatic --port 4000 static",
     "test": "standard",
     "watch": "npm run watch-js & npm start",
     "watch-js": "watchify --debug src -o static/bundle.js"
