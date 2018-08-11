@@ -15,5 +15,14 @@
     </div>
     <img src="img/fullscreen.svg" id="fullscreen">
     <script src="bundle.js"></script>
+    <script>
+      window.GoogleAnalyticsObject = 'ga'
+      function ga () { window.ga.q.push(arguments) }
+      window.ga.q = window.ga.q || []
+      window.ga.l = Date.now()
+      window.ga('create', 'UA-3898076-26', 'auto')
+      window.ga('send', 'pageview')
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
   </body>
 </html>
