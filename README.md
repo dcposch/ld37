@@ -2,7 +2,7 @@
 
 theme: one room
 
-### [DEMO: https://netflixandkill.club](https://netflixandkill.club)
+### [DEMO: https://feross.net/netflixandkill.club](https://feross.net/netflixandkill.club)
 
 ## quick start
 
